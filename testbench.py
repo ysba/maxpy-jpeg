@@ -2,7 +2,7 @@ import importlib
 from PIL import Image
 
 bitstream = []
-bitstream_tst = []
+block_size = 64
 
 def clock_cycle(ckt=None, qty=1):
     if ckt is None:
@@ -18,29 +18,24 @@ def clock_cycle(ckt=None, qty=1):
 
         if ckt.get_data_ready() == 1:
             data32 = ckt.get_JPEG_bitstream() & 0xffffffff
-            bitstream_tst.append(data32)
             bitstream.append((data32&0xff000000)>>24)
             bitstream.append((data32&0xff0000)>>16)
             bitstream.append((data32&0xff00)>>8)
             bitstream.append(data32&0xff)
 
 
-def testbench_run(ckt):
+def testbench_run(ckt, image_path):
+
+    global bitstream
+
+    bitstream = []
 
     # load module
     jpeg = ckt.top()
     print(">>> testbench init", jpeg.name())
 
-    block_size = 64
-
     # open test image
-
-    ##TODO: load data from image file
-    #image = Image.open("ja.tif")
-    #image = Image.open("ja.bmp")
-    image = Image.open("bmp_24.bmp")
-    #image = Image.open("bmp_24.tif")
-    #image = Image.open("snail.bmp")
+    image = Image.open(image_path)
     if image.mode != "RGB":
         print(">>> converting image to rgb")
         image = image.convert("RGB")
@@ -48,6 +43,14 @@ def testbench_run(ckt):
     pixel_count = len(rgb_data)
 
     width, height = image.size
+
+    if width%8 != 0 or height%8 != 0:
+        print(f">>> skipping image {image_path}, dimensions must be multiple of 8!")
+        print(">>> testbench end")
+        return
+
+
+
     block_width = width // 8
     block_height = height // 8
     rgb_blocks = []
@@ -64,15 +67,6 @@ def testbench_run(ckt):
         for pixel in block:
             rgb_values.append(pixel)
     #rgb_values = rgb_data
-
-
-
-    ##TEMP: get data from text file
-    # fp = open("ja_raw_data.txt", "r")
-    # rgb_values = fp.readlines()
-    # fp.close()
-    # pixel_count = len(rgb_values)
-
 
     block_count = pixel_count//block_size
     print(f">>> pixels: {pixel_count}")
@@ -92,34 +86,25 @@ def testbench_run(ckt):
     cycle_count = 0
     data_count = block_size
 
-    #ftst = open("ja_image.txt", "w")
-
     for rgb in rgb_values:
         bin24 = rgb[2]*0x10000 + rgb[1]*0x100 + rgb[0]
-        # rgb = rgb.replace("\n", "")
-        # bin24 = int(rgb, 2)
-
-        #ftst.write(f"{bin24:06x}\n")
-
         jpeg.set_data_in(bin24)
         jpeg.set_enable(1)
         if block_count == 1:
             jpeg.set_end_of_file_signal(1)
+        else:
+            jpeg.set_end_of_file_signal(0)
         clock_cycle(jpeg)
 
         data_count -= 1
         if data_count == 0:
             data_count = block_size
-            clock_cycle(jpeg, 16)
+            clock_cycle(jpeg, 33)
             jpeg.set_enable(0)
             clock_cycle(jpeg)
             block_count -= 1
 
         cycle_count += 1
-
-    # ftst.close()
-    # exit(0)
-
 
     jpeg.set_enable(0)
     clock_cycle(jpeg)
@@ -127,40 +112,55 @@ def testbench_run(ckt):
     print(">>> loop end")
 
 
-    while True:
+    count = 10000
+    while count > 0:
         clock_cycle(jpeg)
         if jpeg.get_eof_data_partial_ready() == 1:
             break
-
+        count -= 1
 
     print(">>> bitstream len", len(bitstream))
 
-    with open("out.txt", "w") as fout:
-        for data in bitstream_tst:
-            fout.write(f"{data:08x}\n")
 
+    output_path = image_path.split(".")[0] + ".jpg"
 
-
-    with open("jpeg_base.bin", "rb") as fbase, open("testbench_out.jpg", "wb") as fout:
+    with open("jpeg_base.bin", "rb") as fbase, open(output_path, "wb") as fout:
         # bitstream.append(0x3f)
         # bitstream.append(0x21)
         # bitstream.append(0xc5)
         # bitstream.append(0x00)
         bitstream.append(0xff)
         bitstream.append(0xd9)
-        header = fbase.read()
+        header = bytearray(fbase.read())
+
+        header[0xa3] = ((height&0xffff) >> 8)
+        header[0xa4] = (height&0xff)
+        header[0xa5] = ((width&0xffff) >> 8)
+        header[0xa6] = (width&0xff)
+
         fout.write(header)
         fout.write(bytes(bitstream))
-
 
     print(">>> testbench end")
 
 
-
 if __name__ == "__main__":
+
     ckt_list = [
         "jpeg_top.jpeg_top",
         ]
+
+    # https://people.math.sc.edu/Burkardt/data/tif/tif.html
+    img_list = [
+        "images/ja.tif",
+        "images/lena_color.tiff",
+        "images/at3_1m4_01.tif",
+        "images/balloons.tif",
+        "images/columns.tif",
+        "images/f14.tif",
+        ]
+
     for ckt_name in ckt_list:
-        ckt = importlib.import_module(ckt_name)
-        testbench_run(ckt)
+        for img in img_list:
+            ckt = importlib.import_module(ckt_name)
+            testbench_run(ckt, img)
