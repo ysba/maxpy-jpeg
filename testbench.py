@@ -1,8 +1,13 @@
+from MAxPy import results
 import importlib
 from PIL import Image
+from skimage.metrics import structural_similarity
+import cv2
+import os
 
 bitstream = []
 block_size = 64
+group = "study_param"
 
 def clock_cycle(ckt=None, qty=1):
     if ckt is None:
@@ -24,15 +29,31 @@ def clock_cycle(ckt=None, qty=1):
             bitstream.append(data32&0xff)
 
 
-def testbench_run(ckt, image_path):
+def testbench_run(ckt=None, results_filename=None):
 
     global bitstream
 
     bitstream = []
 
+    # https://people.math.sc.edu/Burkardt/data/tif/tif.html
+    # img_list = [
+    #     "images/ja.tif",
+    #     # "images/lena_color.tiff",
+    #     # "images/at3_1m4_01.tif",
+    #     # "images/balloons.tif",
+    #     # "images/columns.tif",
+    #     # "images/f14.tif",
+    #     ]
+
+    image_path = "images/balloons.tif"
+    original_size = os.path.getsize(image_path)
+
+    rst = results.ResultsTable(results_filename, ["ssim", "compression"])
+
     # load module
     jpeg = ckt.top()
-    print(">>> testbench init", jpeg.name())
+    print(">>> testbench init")
+    print(f">>> circuit: {jpeg.name()} {jpeg.parameters}, area: {jpeg.area:.2f}")
 
     # open test image
     image = Image.open(image_path)
@@ -122,7 +143,11 @@ def testbench_run(ckt, image_path):
     print(">>> bitstream len", len(bitstream))
 
 
-    output_path = image_path.split(".")[0] + ".jpg"
+    temp = image_path.split(".")[0]
+    if jpeg.parameters != "":
+        output_path = f"{group}/{temp}_{jpeg.name()}_{jpeg.parameters}.jpg"
+    else:
+        output_path = f"{group}/{temp}_{jpeg.name()}.jpg"
 
     with open("jpeg_base.bin", "rb") as fbase, open(output_path, "wb") as fout:
         # bitstream.append(0x3f)
@@ -141,26 +166,26 @@ def testbench_run(ckt, image_path):
         fout.write(header)
         fout.write(bytes(bitstream))
 
+        img_ref = cv2.imread(image_path, cv2.IMREAD_COLOR)
+        img_compare = cv2.imread(output_path, cv2.IMREAD_COLOR)
+        (ssim_value, diff) = structural_similarity(img_ref, img_compare, full=True, win_size=1, use_sample_covariance=False)
+        compressed_size = os.path.getsize(output_path)
+        compression_ratio = compressed_size / original_size
+        print(f">>> ssim: {ssim_value:.6f} ")
+
+        rst.add(jpeg, {"ssim": f"{ssim_value:.6f}", "compression": f"{compression_ratio:.3f}"})
+
     print(">>> testbench end")
+
+    return False, []
 
 
 if __name__ == "__main__":
 
     ckt_list = [
-        "jpeg_top.jpeg_top",
-        ]
-
-    # https://people.math.sc.edu/Burkardt/data/tif/tif.html
-    img_list = [
-        "images/ja.tif",
-        "images/lena_color.tiff",
-        "images/at3_1m4_01.tif",
-        "images/balloons.tif",
-        "images/columns.tif",
-        "images/f14.tif",
+        "jpeg_top_exact.jpeg_top",
         ]
 
     for ckt_name in ckt_list:
-        for img in img_list:
-            ckt = importlib.import_module(ckt_name)
-            testbench_run(ckt, img)
+        ckt = importlib.import_module(ckt_name)
+        testbench_run(ckt=ckt, results_filename="study_param/results.csv")
