@@ -38,7 +38,7 @@ It is only required for the first row, and instead of subtracting 128 from each
 pixel value, a total value can be subtracted at the end of the first row/column multiply,
 involving the 8 pixel values and the 8 DCT matrix values.
 For the other 7 rows of the DCT matrix, the values in each row add up to 0,
-so it is not necessary to subtract 128 from each Y, Cb, and Cr pixel value.
+so it is not necessary to subtract 128 from each Y, Cr, and Cr pixel value.
 Then the Discrete Cosine Transform is performed by multiplying the 8x8 pixel block values
 by the 8x8 DCT matrix. */
 
@@ -81,10 +81,13 @@ output	output_enable;
 integer T1, T21, T22, T23, T24, T25, T26, T27, T28, T31, T32, T33, T34, T52; 
 integer Ti1, Ti21, Ti22, Ti23, Ti24, Ti25, Ti26, Ti27, Ti28, Ti31, Ti32, Ti33, Ti34, Ti52; 
 
-reg [24:0] Cb_temp_11;
-reg [24:0] Cb11, Cb21, Cb31, Cb41, Cb51, Cb61, Cb71, Cb81, Cb11_final;
-reg [31:0] Cb_temp_21, Cb_temp_31, Cb_temp_41, Cb_temp_51;
-reg [31:0] Cb_temp_61, Cb_temp_71, Cb_temp_81;
+reg [24:0] Cr_temp_11;
+reg [24:0] Cr11, Cr21, Cr31, Cr41, Cr51, Cr61, Cr71, Cr81, Cr11_final;
+
+reg [24:0] buf_Cr11, buf_Cr21, buf_Cr31, buf_Cr41, buf_Cr51, buf_Cr61, buf_Cr71, buf_Cr81;
+
+reg [31:0] Cr_temp_21, Cr_temp_31, Cr_temp_41, Cr_temp_51;
+reg [31:0] Cr_temp_61, Cr_temp_71, Cr_temp_81;
 reg [31:0] Z_temp_11, Z_temp_12, Z_temp_13, Z_temp_14;
 reg [31:0] Z_temp_15, Z_temp_16, Z_temp_17, Z_temp_18;
 reg [31:0] Z_temp_21, Z_temp_22, Z_temp_23, Z_temp_24;
@@ -101,6 +104,7 @@ reg [31:0] Z_temp_71, Z_temp_72, Z_temp_73, Z_temp_74;
 reg [31:0] Z_temp_75, Z_temp_76, Z_temp_77, Z_temp_78;
 reg [31:0] Z_temp_81, Z_temp_82, Z_temp_83, Z_temp_84;
 reg [31:0] Z_temp_85, Z_temp_86, Z_temp_87, Z_temp_88;
+
 reg [24:0] Z11, Z12, Z13, Z14, Z15, Z16, Z17, Z18;
 reg [24:0] Z21, Z22, Z23, Z24, Z25, Z26, Z27, Z28;
 reg [24:0] Z31, Z32, Z33, Z34, Z35, Z36, Z37, Z38;
@@ -109,19 +113,38 @@ reg [24:0] Z51, Z52, Z53, Z54, Z55, Z56, Z57, Z58;
 reg [24:0] Z61, Z62, Z63, Z64, Z65, Z66, Z67, Z68;
 reg [24:0] Z71, Z72, Z73, Z74, Z75, Z76, Z77, Z78;
 reg [24:0] Z81, Z82, Z83, Z84, Z85, Z86, Z87, Z88;
-reg [31:0]  Cb11_final_2, Cb21_final_2, Cb11_final_3, Cb11_final_4, Cb31_final_2, Cb41_final_2;
-reg [31:0]  Cb51_final_2, Cb61_final_2, Cb71_final_2, Cb81_final_2;
-reg [10:0]  Cb11_final_1, Cb21_final_1, Cb31_final_1, Cb41_final_1;
-reg [10:0]  Cb51_final_1, Cb61_final_1, Cb71_final_1, Cb81_final_1;
-reg [24:0] Cb21_final, Cb31_final, Cb41_final, Cb51_final;
-reg [24:0] Cb61_final, Cb71_final, Cb81_final;
-reg [24:0] Cb21_final_prev, Cb21_final_diff;
-reg [24:0] Cb31_final_prev, Cb31_final_diff;
-reg [24:0] Cb41_final_prev, Cb41_final_diff;
-reg [24:0] Cb51_final_prev, Cb51_final_diff;
-reg [24:0] Cb61_final_prev, Cb61_final_diff;
-reg [24:0] Cb71_final_prev, Cb71_final_diff;
-reg [24:0] Cb81_final_prev, Cb81_final_diff;
+
+reg [26:0] buf_Z11, buf_Z12, buf_Z13, buf_Z14, buf_Z15, buf_Z16, buf_Z17, buf_Z18;
+reg [26:0] buf_Z21, buf_Z22, buf_Z23, buf_Z24, buf_Z25, buf_Z26, buf_Z27, buf_Z28;
+reg [26:0] buf_Z31, buf_Z32, buf_Z33, buf_Z34, buf_Z35, buf_Z36, buf_Z37, buf_Z38;
+reg [26:0] buf_Z41, buf_Z42, buf_Z43, buf_Z44, buf_Z45, buf_Z46, buf_Z47, buf_Z48;
+reg [26:0] buf_Z51, buf_Z52, buf_Z53, buf_Z54, buf_Z55, buf_Z56, buf_Z57, buf_Z58;
+reg [26:0] buf_Z61, buf_Z62, buf_Z63, buf_Z64, buf_Z65, buf_Z66, buf_Z67, buf_Z68;
+reg [26:0] buf_Z71, buf_Z72, buf_Z73, buf_Z74, buf_Z75, buf_Z76, buf_Z77, buf_Z78;
+reg [26:0] buf_Z81, buf_Z82, buf_Z83, buf_Z84, buf_Z85, buf_Z86, buf_Z87, buf_Z88;
+
+reg [31:0]  Cr11_final_2, Cr21_final_2, Cr11_final_3, Cr11_final_4, Cr31_final_2, Cr41_final_2;
+reg [31:0]  Cr51_final_2, Cr61_final_2, Cr71_final_2, Cr81_final_2;
+reg [10:0]  Cr11_final_1, Cr21_final_1, Cr31_final_1, Cr41_final_1;
+reg [10:0]  Cr51_final_1, Cr61_final_1, Cr71_final_1, Cr81_final_1;
+reg [24:0] Cr21_final, Cr31_final, Cr41_final, Cr51_final;
+reg [24:0] Cr61_final, Cr71_final, Cr81_final;
+reg [24:0] Cr21_final_prev, Cr21_final_diff;
+reg [24:0] Cr31_final_prev, Cr31_final_diff;
+reg [24:0] Cr41_final_prev, Cr41_final_diff;
+reg [24:0] Cr51_final_prev, Cr51_final_diff;
+reg [24:0] Cr61_final_prev, Cr61_final_diff;
+reg [24:0] Cr71_final_prev, Cr71_final_diff;
+reg [24:0] Cr81_final_prev, Cr81_final_diff;
+
+reg [24:0] buf_Cr21_final_diff;
+reg [24:0] buf_Cr31_final_diff;
+reg [24:0] buf_Cr41_final_diff;
+reg [24:0] buf_Cr51_final_diff;
+reg [24:0] buf_Cr61_final_diff;
+reg [24:0] buf_Cr71_final_diff;
+reg [24:0] buf_Cr81_final_diff;
+
 reg [10:0] Z11_final, Z12_final, Z13_final, Z14_final;
 reg [10:0] Z15_final, Z16_final, Z17_final, Z18_final;
 reg [10:0] Z21_final, Z22_final, Z23_final, Z24_final;
@@ -143,8 +166,8 @@ reg	[2:0] count_of, count_of_copy;
 reg	count_1, count_3, count_4, count_5, count_6, count_7, count_8, enable_1, output_enable;
 reg count_9, count_10;
 reg [7:0] data_1;
-integer Cb2_mul_input, Cb3_mul_input, Cb4_mul_input, Cb5_mul_input;
-integer Cb6_mul_input, Cb7_mul_input, Cb8_mul_input;	
+integer Cr2_mul_input, Cr3_mul_input, Cr4_mul_input, Cr5_mul_input;
+integer Cr6_mul_input, Cr7_mul_input, Cr8_mul_input;
 integer Ti2_mul_input, Ti3_mul_input, Ti4_mul_input, Ti5_mul_input;
 integer Ti6_mul_input, Ti7_mul_input, Ti8_mul_input;
 
@@ -205,38 +228,38 @@ begin
 		Z_temp_85 <= 0; Z_temp_86 <= 0; Z_temp_87 <= 0; Z_temp_88 <= 0;
 		end
 	else if (enable_1 & count_8) begin
-		Z_temp_11 <= Cb11_final_4 * Ti1; Z_temp_12 <= Cb11_final_4 * Ti2_mul_input;
-		Z_temp_13 <= Cb11_final_4 * Ti3_mul_input; Z_temp_14 <= Cb11_final_4 * Ti4_mul_input;
-		Z_temp_15 <= Cb11_final_4 * Ti5_mul_input; Z_temp_16 <= Cb11_final_4 * Ti6_mul_input;
-		Z_temp_17 <= Cb11_final_4 * Ti7_mul_input; Z_temp_18 <= Cb11_final_4 * Ti8_mul_input;
-		Z_temp_21 <= Cb21_final_2 * Ti1; Z_temp_22 <= Cb21_final_2 * Ti2_mul_input;
-		Z_temp_23 <= Cb21_final_2 * Ti3_mul_input; Z_temp_24 <= Cb21_final_2 * Ti4_mul_input;
-		Z_temp_25 <= Cb21_final_2 * Ti5_mul_input; Z_temp_26 <= Cb21_final_2 * Ti6_mul_input;
-		Z_temp_27 <= Cb21_final_2 * Ti7_mul_input; Z_temp_28 <= Cb21_final_2 * Ti8_mul_input;
-		Z_temp_31 <= Cb31_final_2 * Ti1; Z_temp_32 <= Cb31_final_2 * Ti2_mul_input;
-		Z_temp_33 <= Cb31_final_2 * Ti3_mul_input; Z_temp_34 <= Cb31_final_2 * Ti4_mul_input;
-		Z_temp_35 <= Cb31_final_2 * Ti5_mul_input; Z_temp_36 <= Cb31_final_2 * Ti6_mul_input;
-		Z_temp_37 <= Cb31_final_2 * Ti7_mul_input; Z_temp_38 <= Cb31_final_2 * Ti8_mul_input;
-		Z_temp_41 <= Cb41_final_2 * Ti1; Z_temp_42 <= Cb41_final_2 * Ti2_mul_input;
-		Z_temp_43 <= Cb41_final_2 * Ti3_mul_input; Z_temp_44 <= Cb41_final_2 * Ti4_mul_input;
-		Z_temp_45 <= Cb41_final_2 * Ti5_mul_input; Z_temp_46 <= Cb41_final_2 * Ti6_mul_input;
-		Z_temp_47 <= Cb41_final_2 * Ti7_mul_input; Z_temp_48 <= Cb41_final_2 * Ti8_mul_input;
-		Z_temp_51 <= Cb51_final_2 * Ti1; Z_temp_52 <= Cb51_final_2 * Ti2_mul_input;
-		Z_temp_53 <= Cb51_final_2 * Ti3_mul_input; Z_temp_54 <= Cb51_final_2 * Ti4_mul_input;
-		Z_temp_55 <= Cb51_final_2 * Ti5_mul_input; Z_temp_56 <= Cb51_final_2 * Ti6_mul_input;
-		Z_temp_57 <= Cb51_final_2 * Ti7_mul_input; Z_temp_58 <= Cb51_final_2 * Ti8_mul_input;
-		Z_temp_61 <= Cb61_final_2 * Ti1; Z_temp_62 <= Cb61_final_2 * Ti2_mul_input;
-		Z_temp_63 <= Cb61_final_2 * Ti3_mul_input; Z_temp_64 <= Cb61_final_2 * Ti4_mul_input;
-		Z_temp_65 <= Cb61_final_2 * Ti5_mul_input; Z_temp_66 <= Cb61_final_2 * Ti6_mul_input;
-		Z_temp_67 <= Cb61_final_2 * Ti7_mul_input; Z_temp_68 <= Cb61_final_2 * Ti8_mul_input;
-		Z_temp_71 <= Cb71_final_2 * Ti1; Z_temp_72 <= Cb71_final_2 * Ti2_mul_input;
-		Z_temp_73 <= Cb71_final_2 * Ti3_mul_input; Z_temp_74 <= Cb71_final_2 * Ti4_mul_input;
-		Z_temp_75 <= Cb71_final_2 * Ti5_mul_input; Z_temp_76 <= Cb71_final_2 * Ti6_mul_input;
-		Z_temp_77 <= Cb71_final_2 * Ti7_mul_input; Z_temp_78 <= Cb71_final_2 * Ti8_mul_input;
-		Z_temp_81 <= Cb81_final_2 * Ti1; Z_temp_82 <= Cb81_final_2 * Ti2_mul_input;
-		Z_temp_83 <= Cb81_final_2 * Ti3_mul_input; Z_temp_84 <= Cb81_final_2 * Ti4_mul_input;
-		Z_temp_85 <= Cb81_final_2 * Ti5_mul_input; Z_temp_86 <= Cb81_final_2 * Ti6_mul_input;
-		Z_temp_87 <= Cb81_final_2 * Ti7_mul_input; Z_temp_88 <= Cb81_final_2 * Ti8_mul_input;
+		Z_temp_11 <= Cr11_final_4 * Ti1; Z_temp_12 <= Cr11_final_4 * Ti2_mul_input;
+		Z_temp_13 <= Cr11_final_4 * Ti3_mul_input; Z_temp_14 <= Cr11_final_4 * Ti4_mul_input;
+		Z_temp_15 <= Cr11_final_4 * Ti5_mul_input; Z_temp_16 <= Cr11_final_4 * Ti6_mul_input;
+		Z_temp_17 <= Cr11_final_4 * Ti7_mul_input; Z_temp_18 <= Cr11_final_4 * Ti8_mul_input;
+		Z_temp_21 <= Cr21_final_2 * Ti1; Z_temp_22 <= Cr21_final_2 * Ti2_mul_input;
+		Z_temp_23 <= Cr21_final_2 * Ti3_mul_input; Z_temp_24 <= Cr21_final_2 * Ti4_mul_input;
+		Z_temp_25 <= Cr21_final_2 * Ti5_mul_input; Z_temp_26 <= Cr21_final_2 * Ti6_mul_input;
+		Z_temp_27 <= Cr21_final_2 * Ti7_mul_input; Z_temp_28 <= Cr21_final_2 * Ti8_mul_input;
+		Z_temp_31 <= Cr31_final_2 * Ti1; Z_temp_32 <= Cr31_final_2 * Ti2_mul_input;
+		Z_temp_33 <= Cr31_final_2 * Ti3_mul_input; Z_temp_34 <= Cr31_final_2 * Ti4_mul_input;
+		Z_temp_35 <= Cr31_final_2 * Ti5_mul_input; Z_temp_36 <= Cr31_final_2 * Ti6_mul_input;
+		Z_temp_37 <= Cr31_final_2 * Ti7_mul_input; Z_temp_38 <= Cr31_final_2 * Ti8_mul_input;
+		Z_temp_41 <= Cr41_final_2 * Ti1; Z_temp_42 <= Cr41_final_2 * Ti2_mul_input;
+		Z_temp_43 <= Cr41_final_2 * Ti3_mul_input; Z_temp_44 <= Cr41_final_2 * Ti4_mul_input;
+		Z_temp_45 <= Cr41_final_2 * Ti5_mul_input; Z_temp_46 <= Cr41_final_2 * Ti6_mul_input;
+		Z_temp_47 <= Cr41_final_2 * Ti7_mul_input; Z_temp_48 <= Cr41_final_2 * Ti8_mul_input;
+		Z_temp_51 <= Cr51_final_2 * Ti1; Z_temp_52 <= Cr51_final_2 * Ti2_mul_input;
+		Z_temp_53 <= Cr51_final_2 * Ti3_mul_input; Z_temp_54 <= Cr51_final_2 * Ti4_mul_input;
+		Z_temp_55 <= Cr51_final_2 * Ti5_mul_input; Z_temp_56 <= Cr51_final_2 * Ti6_mul_input;
+		Z_temp_57 <= Cr51_final_2 * Ti7_mul_input; Z_temp_58 <= Cr51_final_2 * Ti8_mul_input;
+		Z_temp_61 <= Cr61_final_2 * Ti1; Z_temp_62 <= Cr61_final_2 * Ti2_mul_input;
+		Z_temp_63 <= Cr61_final_2 * Ti3_mul_input; Z_temp_64 <= Cr61_final_2 * Ti4_mul_input;
+		Z_temp_65 <= Cr61_final_2 * Ti5_mul_input; Z_temp_66 <= Cr61_final_2 * Ti6_mul_input;
+		Z_temp_67 <= Cr61_final_2 * Ti7_mul_input; Z_temp_68 <= Cr61_final_2 * Ti8_mul_input;
+		Z_temp_71 <= Cr71_final_2 * Ti1; Z_temp_72 <= Cr71_final_2 * Ti2_mul_input;
+		Z_temp_73 <= Cr71_final_2 * Ti3_mul_input; Z_temp_74 <= Cr71_final_2 * Ti4_mul_input;
+		Z_temp_75 <= Cr71_final_2 * Ti5_mul_input; Z_temp_76 <= Cr71_final_2 * Ti6_mul_input;
+		Z_temp_77 <= Cr71_final_2 * Ti7_mul_input; Z_temp_78 <= Cr71_final_2 * Ti8_mul_input;
+		Z_temp_81 <= Cr81_final_2 * Ti1; Z_temp_82 <= Cr81_final_2 * Ti2_mul_input;
+		Z_temp_83 <= Cr81_final_2 * Ti3_mul_input; Z_temp_84 <= Cr81_final_2 * Ti4_mul_input;
+		Z_temp_85 <= Cr81_final_2 * Ti5_mul_input; Z_temp_86 <= Cr81_final_2 * Ti6_mul_input;
+		Z_temp_87 <= Cr81_final_2 * Ti7_mul_input; Z_temp_88 <= Cr81_final_2 * Ti8_mul_input;
 		end
 end
 
@@ -271,24 +294,113 @@ begin
 		Z85 <= 0; Z86 <= 0; Z87 <= 0; Z88 <= 0;
 		end
 	else if (enable & count_9) begin
-		Z11 <= Z_temp_11 + Z11; Z12 <= Z_temp_12 + Z12; Z13 <= Z_temp_13 + Z13; Z14 <= Z_temp_14 + Z14;
-		Z15 <= Z_temp_15 + Z15; Z16 <= Z_temp_16 + Z16; Z17 <= Z_temp_17 + Z17; Z18 <= Z_temp_18 + Z18;
-		Z21 <= Z_temp_21 + Z21; Z22 <= Z_temp_22 + Z22; Z23 <= Z_temp_23 + Z23; Z24 <= Z_temp_24 + Z24;
-		Z25 <= Z_temp_25 + Z25; Z26 <= Z_temp_26 + Z26; Z27 <= Z_temp_27 + Z27; Z28 <= Z_temp_28 + Z28;
-		Z31 <= Z_temp_31 + Z31; Z32 <= Z_temp_32 + Z32; Z33 <= Z_temp_33 + Z33; Z34 <= Z_temp_34 + Z34;
-		Z35 <= Z_temp_35 + Z35; Z36 <= Z_temp_36 + Z36; Z37 <= Z_temp_37 + Z37; Z38 <= Z_temp_38 + Z38;
-		Z41 <= Z_temp_41 + Z41; Z42 <= Z_temp_42 + Z42; Z43 <= Z_temp_43 + Z43; Z44 <= Z_temp_44 + Z44;
-		Z45 <= Z_temp_45 + Z45; Z46 <= Z_temp_46 + Z46; Z47 <= Z_temp_47 + Z47; Z48 <= Z_temp_48 + Z48;
-		Z51 <= Z_temp_51 + Z51; Z52 <= Z_temp_52 + Z52; Z53 <= Z_temp_53 + Z53; Z54 <= Z_temp_54 + Z54;
-		Z55 <= Z_temp_55 + Z55; Z56 <= Z_temp_56 + Z56; Z57 <= Z_temp_57 + Z57; Z58 <= Z_temp_58 + Z58;
-		Z61 <= Z_temp_61 + Z61; Z62 <= Z_temp_62 + Z62; Z63 <= Z_temp_63 + Z63; Z64 <= Z_temp_64 + Z64;
-		Z65 <= Z_temp_65 + Z65; Z66 <= Z_temp_66 + Z66; Z67 <= Z_temp_67 + Z67; Z68 <= Z_temp_68 + Z68;
-		Z71 <= Z_temp_71 + Z71; Z72 <= Z_temp_72 + Z72; Z73 <= Z_temp_73 + Z73; Z74 <= Z_temp_74 + Z74;
-		Z75 <= Z_temp_75 + Z75; Z76 <= Z_temp_76 + Z76; Z77 <= Z_temp_77 + Z77; Z78 <= Z_temp_78 + Z78;
-		Z81 <= Z_temp_81 + Z81; Z82 <= Z_temp_82 + Z82; Z83 <= Z_temp_83 + Z83; Z84 <= Z_temp_84 + Z84;
-		Z85 <= Z_temp_85 + Z85; Z86 <= Z_temp_86 + Z86; Z87 <= Z_temp_87 + Z87; Z88 <= Z_temp_88 + Z88;
-		end	
+		// Z11 <= Z_temp_11 + Z11; Z12 <= Z_temp_12 + Z12; Z13 <= Z_temp_13 + Z13; Z14 <= Z_temp_14 + Z14;
+		// Z15 <= Z_temp_15 + Z15; Z16 <= Z_temp_16 + Z16; Z17 <= Z_temp_17 + Z17; Z18 <= Z_temp_18 + Z18;
+		// Z21 <= Z_temp_21 + Z21; Z22 <= Z_temp_22 + Z22; Z23 <= Z_temp_23 + Z23; Z24 <= Z_temp_24 + Z24;
+		// Z25 <= Z_temp_25 + Z25; Z26 <= Z_temp_26 + Z26; Z27 <= Z_temp_27 + Z27; Z28 <= Z_temp_28 + Z28;
+		// Z31 <= Z_temp_31 + Z31; Z32 <= Z_temp_32 + Z32; Z33 <= Z_temp_33 + Z33; Z34 <= Z_temp_34 + Z34;
+		// Z35 <= Z_temp_35 + Z35; Z36 <= Z_temp_36 + Z36; Z37 <= Z_temp_37 + Z37; Z38 <= Z_temp_38 + Z38;
+		// Z41 <= Z_temp_41 + Z41; Z42 <= Z_temp_42 + Z42; Z43 <= Z_temp_43 + Z43; Z44 <= Z_temp_44 + Z44;
+		// Z45 <= Z_temp_45 + Z45; Z46 <= Z_temp_46 + Z46; Z47 <= Z_temp_47 + Z47; Z48 <= Z_temp_48 + Z48;
+		// Z51 <= Z_temp_51 + Z51; Z52 <= Z_temp_52 + Z52; Z53 <= Z_temp_53 + Z53; Z54 <= Z_temp_54 + Z54;
+		// Z55 <= Z_temp_55 + Z55; Z56 <= Z_temp_56 + Z56; Z57 <= Z_temp_57 + Z57; Z58 <= Z_temp_58 + Z58;
+		// Z61 <= Z_temp_61 + Z61; Z62 <= Z_temp_62 + Z62; Z63 <= Z_temp_63 + Z63; Z64 <= Z_temp_64 + Z64;
+		// Z65 <= Z_temp_65 + Z65; Z66 <= Z_temp_66 + Z66; Z67 <= Z_temp_67 + Z67; Z68 <= Z_temp_68 + Z68;
+		// Z71 <= Z_temp_71 + Z71; Z72 <= Z_temp_72 + Z72; Z73 <= Z_temp_73 + Z73; Z74 <= Z_temp_74 + Z74;
+		// Z75 <= Z_temp_75 + Z75; Z76 <= Z_temp_76 + Z76; Z77 <= Z_temp_77 + Z77; Z78 <= Z_temp_78 + Z78;
+		// Z81 <= Z_temp_81 + Z81; Z82 <= Z_temp_82 + Z82; Z83 <= Z_temp_83 + Z83; Z84 <= Z_temp_84 + Z84;
+		// Z85 <= Z_temp_85 + Z85; Z86 <= Z_temp_86 + Z86; Z87 <= Z_temp_87 + Z87; Z88 <= Z_temp_88 + Z88;
+
+		Z11 <= buf_Z11; Z12 <= buf_Z12; Z13 <= buf_Z13; Z14 <= buf_Z14;
+		Z15 <= buf_Z15; Z16 <= buf_Z16; Z17 <= buf_Z17; Z18 <= buf_Z18;
+		Z21 <= buf_Z21; Z22 <= buf_Z22; Z23 <= buf_Z23; Z24 <= buf_Z24;
+		Z25 <= buf_Z25; Z26 <= buf_Z26; Z27 <= buf_Z27; Z28 <= buf_Z28;
+		Z31 <= buf_Z31; Z32 <= buf_Z32; Z33 <= buf_Z33; Z34 <= buf_Z34;
+		Z35 <= buf_Z35; Z36 <= buf_Z36; Z37 <= buf_Z37; Z38 <= buf_Z38;
+		Z41 <= buf_Z41; Z42 <= buf_Z42; Z43 <= buf_Z43; Z44 <= buf_Z44;
+		Z45 <= buf_Z45; Z46 <= buf_Z46; Z47 <= buf_Z47; Z48 <= buf_Z48;
+		Z51 <= buf_Z51; Z52 <= buf_Z52; Z53 <= buf_Z53; Z54 <= buf_Z54;
+		Z55 <= buf_Z55; Z56 <= buf_Z56; Z57 <= buf_Z57; Z58 <= buf_Z58;
+		Z61 <= buf_Z61; Z62 <= buf_Z62; Z63 <= buf_Z63; Z64 <= buf_Z64;
+		Z65 <= buf_Z65; Z66 <= buf_Z66; Z67 <= buf_Z67; Z68 <= buf_Z68;
+		Z71 <= buf_Z71; Z72 <= buf_Z72; Z73 <= buf_Z73; Z74 <= buf_Z74;
+		Z75 <= buf_Z75; Z76 <= buf_Z76; Z77 <= buf_Z77; Z78 <= buf_Z78;
+		Z81 <= buf_Z81; Z82 <= buf_Z82; Z83 <= buf_Z83; Z84 <= buf_Z84;
+		Z85 <= buf_Z85; Z86 <= buf_Z86; Z87 <= buf_Z87; Z88 <= buf_Z88;
+		end
 end
+
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u01 (Z_temp_11, Z11, buf_Z11);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u02 (Z_temp_12, Z12, buf_Z12);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u03 (Z_temp_13, Z13, buf_Z13);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u04 (Z_temp_14, Z14, buf_Z14);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u05 (Z_temp_15, Z15, buf_Z15);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u06 (Z_temp_16, Z16, buf_Z16);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u07 (Z_temp_17, Z17, buf_Z17);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u08 (Z_temp_18, Z18, buf_Z18);
+
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u09 (Z_temp_21, Z21, buf_Z21);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u10 (Z_temp_22, Z22, buf_Z22);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u11 (Z_temp_23, Z23, buf_Z23);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u12 (Z_temp_24, Z24, buf_Z24);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u13 (Z_temp_25, Z25, buf_Z25);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u14 (Z_temp_26, Z26, buf_Z26);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u15 (Z_temp_27, Z27, buf_Z27);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u16 (Z_temp_28, Z28, buf_Z28);
+
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u17 (Z_temp_31, Z31, buf_Z31);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u18 (Z_temp_32, Z32, buf_Z32);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u19 (Z_temp_33, Z33, buf_Z33);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u20 (Z_temp_34, Z34, buf_Z34);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u21 (Z_temp_35, Z35, buf_Z35);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u22 (Z_temp_36, Z36, buf_Z36);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u23 (Z_temp_37, Z37, buf_Z37);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u24 (Z_temp_38, Z38, buf_Z38);
+
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u25 (Z_temp_41, Z41, buf_Z41);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u26 (Z_temp_42, Z42, buf_Z42);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u27 (Z_temp_43, Z43, buf_Z43);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u28 (Z_temp_44, Z44, buf_Z44);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u29 (Z_temp_45, Z45, buf_Z45);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u30 (Z_temp_46, Z46, buf_Z46);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u31 (Z_temp_47, Z47, buf_Z47);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u32 (Z_temp_48, Z48, buf_Z48);
+
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u33 (Z_temp_51, Z51, buf_Z51);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u34 (Z_temp_52, Z52, buf_Z52);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u35 (Z_temp_53, Z53, buf_Z53);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u36 (Z_temp_54, Z54, buf_Z54);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u37 (Z_temp_55, Z55, buf_Z55);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u38 (Z_temp_56, Z56, buf_Z56);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u39 (Z_temp_57, Z57, buf_Z57);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u40 (Z_temp_58, Z58, buf_Z58);
+
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u41 (Z_temp_61, Z61, buf_Z61);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u42 (Z_temp_62, Z62, buf_Z62);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u43 (Z_temp_63, Z63, buf_Z63);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u44 (Z_temp_64, Z64, buf_Z64);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u45 (Z_temp_65, Z65, buf_Z65);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u46 (Z_temp_66, Z66, buf_Z66);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u47 (Z_temp_67, Z67, buf_Z67);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u48 (Z_temp_68, Z68, buf_Z68);
+
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u49 (Z_temp_71, Z71, buf_Z71);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u50 (Z_temp_72, Z72, buf_Z72);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u51 (Z_temp_73, Z73, buf_Z73);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u52 (Z_temp_74, Z74, buf_Z74);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u53 (Z_temp_75, Z75, buf_Z75);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u54 (Z_temp_76, Z76, buf_Z76);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u55 (Z_temp_77, Z77, buf_Z77);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u56 (Z_temp_78, Z78, buf_Z78);
+
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u57 (Z_temp_81, Z81, buf_Z81);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u58 (Z_temp_82, Z82, buf_Z82);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u59 (Z_temp_83, Z83, buf_Z83);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u60 (Z_temp_84, Z84, buf_Z84);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u61 (Z_temp_85, Z85, buf_Z85);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u62 (Z_temp_86, Z86, buf_Z86);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u63 (Z_temp_87, Z87, buf_Z87);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u64 (Z_temp_88, Z88, buf_Z88);
 
 always @(posedge clk)
 begin
@@ -393,82 +505,97 @@ end
 always @(posedge clk)
 begin
 	if (rst)
-		Cb_temp_11 <= 0;
+		Cr_temp_11 <= 0;
 	else if (enable)
-		Cb_temp_11 <= data_in * T1; 
+		Cr_temp_11 <= data_in * T1;
 end  
 
 always @(posedge clk)
 begin
 	if (rst)
-		Cb11 <= 0;
+		Cr11 <= 0;
 	else if (count == 1 & enable == 1)
-		Cb11 <= Cb_temp_11;
+		Cr11 <= Cr_temp_11;
 	else if (enable)
-		Cb11 <= Cb_temp_11 + Cb11;
+		Cr11 <= Cr_temp_11 + Cr11;
 end
 
 always @(posedge clk)
 begin
 	if (rst) begin
-		Cb_temp_21 <= 0;
-		Cb_temp_31 <= 0;
-		Cb_temp_41 <= 0;
-		Cb_temp_51 <= 0;
-		Cb_temp_61 <= 0;
-		Cb_temp_71 <= 0;
-		Cb_temp_81 <= 0;
+		Cr_temp_21 <= 0;
+		Cr_temp_31 <= 0;
+		Cr_temp_41 <= 0;
+		Cr_temp_51 <= 0;
+		Cr_temp_61 <= 0;
+		Cr_temp_71 <= 0;
+		Cr_temp_81 <= 0;
 		end
 	else if (!enable_1) begin
-		Cb_temp_21 <= 0;
-		Cb_temp_31 <= 0;
-		Cb_temp_41 <= 0;
-		Cb_temp_51 <= 0;
-		Cb_temp_61 <= 0;
-		Cb_temp_71 <= 0;
-		Cb_temp_81 <= 0;
+		Cr_temp_21 <= 0;
+		Cr_temp_31 <= 0;
+		Cr_temp_41 <= 0;
+		Cr_temp_51 <= 0;
+		Cr_temp_61 <= 0;
+		Cr_temp_71 <= 0;
+		Cr_temp_81 <= 0;
 		end
 	else if (enable_1) begin
-		Cb_temp_21 <= data_1 * Cb2_mul_input; 
-		Cb_temp_31 <= data_1 * Cb3_mul_input; 
-		Cb_temp_41 <= data_1 * Cb4_mul_input; 
-		Cb_temp_51 <= data_1 * Cb5_mul_input; 
-		Cb_temp_61 <= data_1 * Cb6_mul_input; 
-		Cb_temp_71 <= data_1 * Cb7_mul_input; 
-		Cb_temp_81 <= data_1 * Cb8_mul_input; 
+		Cr_temp_21 <= data_1 * Cr2_mul_input;
+		Cr_temp_31 <= data_1 * Cr3_mul_input;
+		Cr_temp_41 <= data_1 * Cr4_mul_input;
+		Cr_temp_51 <= data_1 * Cr5_mul_input;
+		Cr_temp_61 <= data_1 * Cr6_mul_input;
+		Cr_temp_71 <= data_1 * Cr7_mul_input;
+		Cr_temp_81 <= data_1 * Cr8_mul_input;
 		end
 end
 
 always @(posedge clk)
 begin
 	if (rst) begin
-		Cb21 <= 0;
-		Cb31 <= 0;
-		Cb41 <= 0;
-		Cb51 <= 0;
-		Cb61 <= 0;
-		Cb71 <= 0;
-		Cb81 <= 0;
+		Cr21 <= 0;
+		Cr31 <= 0;
+		Cr41 <= 0;
+		Cr51 <= 0;
+		Cr61 <= 0;
+		Cr71 <= 0;
+		Cr81 <= 0;
 		end
 	else if (!enable_1) begin
-		Cb21 <= 0;
-		Cb31 <= 0;
-		Cb41 <= 0;
-		Cb51 <= 0;
-		Cb61 <= 0;
-		Cb71 <= 0;
-		Cb81 <= 0;
+		Cr21 <= 0;
+		Cr31 <= 0;
+		Cr41 <= 0;
+		Cr51 <= 0;
+		Cr61 <= 0;
+		Cr71 <= 0;
+		Cr81 <= 0;
 		end
 	else if (enable_1) begin
-		Cb21 <= Cb_temp_21 + Cb21;
-		Cb31 <= Cb_temp_31 + Cb31;
-		Cb41 <= Cb_temp_41 + Cb41;
-		Cb51 <= Cb_temp_51 + Cb51;
-		Cb61 <= Cb_temp_61 + Cb61;
-		Cb71 <= Cb_temp_71 + Cb71;
-		Cb81 <= Cb_temp_81 + Cb81;
+		// Cr21 <= Cr_temp_21 + Cr21;
+		// Cr31 <= Cr_temp_31 + Cr31;
+		// Cr41 <= Cr_temp_41 + Cr41;
+		// Cr51 <= Cr_temp_51 + Cr51;
+		// Cr61 <= Cr_temp_61 + Cr61;
+		// Cr71 <= Cr_temp_71 + Cr71;
+		// Cr81 <= Cr_temp_81 + Cr81;
+		Cr21 <= buf_Cr21;
+		Cr31 <= buf_Cr31;
+		Cr41 <= buf_Cr41;
+		Cr51 <= buf_Cr51;
+		Cr61 <= buf_Cr61;
+		Cr71 <= buf_Cr71;
+		Cr81 <= buf_Cr81;
 		end
-end 
+end
+
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u65 (Cr_temp_21, Cr21, buf_Cr21);
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u66 (Cr_temp_31, Cr31, buf_Cr31);
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u67 (Cr_temp_41, Cr41, buf_Cr41);
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u68 (Cr_temp_51, Cr51, buf_Cr51);
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u69 (Cr_temp_61, Cr61, buf_Cr61);
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u70 (Cr_temp_71, Cr71, buf_Cr71);
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u71 (Cr_temp_81, Cr81, buf_Cr81);
 
 always @(posedge clk)
 begin
@@ -521,12 +648,12 @@ end
 always @(posedge clk)
 begin
 	if (rst) begin
- 		Cb11_final <= 0;
+ 		Cr11_final <= 0;
 		end
 	else if (count_3 & enable_1) begin
-		Cb11_final <= Cb11 - 25'd5932032;  
-		/* The Cb values weren't centered on 0 before doing the DCT	
-		 128 needs to be subtracted from each Cb value before, or in this
+		Cr11_final <= Cr11 - 25'd5932032;
+		/* The Cr values weren't centered on 0 before doing the DCT
+		 128 needs to be subtracted from each Cr value before, or in this
 		 case, 362 is subtracted from the total, because this is the 
 		 total obtained by subtracting 128 from each element 
 		 and then multiplying by the weight
@@ -540,148 +667,163 @@ end
 always @(posedge clk)
 begin
 	if (rst) begin
- 		Cb21_final <= 0; Cb21_final_prev <= 0;
- 		Cb31_final <= 0; Cb31_final_prev <= 0;
- 		Cb41_final <= 0; Cb41_final_prev <= 0;
- 		Cb51_final <= 0; Cb51_final_prev <= 0;
- 		Cb61_final <= 0; Cb61_final_prev <= 0;
- 		Cb71_final <= 0; Cb71_final_prev <= 0;
- 		Cb81_final <= 0; Cb81_final_prev <= 0;
+ 		Cr21_final <= 0; Cr21_final_prev <= 0;
+ 		Cr31_final <= 0; Cr31_final_prev <= 0;
+ 		Cr41_final <= 0; Cr41_final_prev <= 0;
+ 		Cr51_final <= 0; Cr51_final_prev <= 0;
+ 		Cr61_final <= 0; Cr61_final_prev <= 0;
+ 		Cr71_final <= 0; Cr71_final_prev <= 0;
+ 		Cr81_final <= 0; Cr81_final_prev <= 0;
 		end
 	else if (!enable_1) begin
-		Cb21_final <= 0; Cb21_final_prev <= 0;
- 		Cb31_final <= 0; Cb31_final_prev <= 0;
- 		Cb41_final <= 0; Cb41_final_prev <= 0;
- 		Cb51_final <= 0; Cb51_final_prev <= 0;
- 		Cb61_final <= 0; Cb61_final_prev <= 0;
- 		Cb71_final <= 0; Cb71_final_prev <= 0;
- 		Cb81_final <= 0; Cb81_final_prev <= 0;
+		Cr21_final <= 0; Cr21_final_prev <= 0;
+ 		Cr31_final <= 0; Cr31_final_prev <= 0;
+ 		Cr41_final <= 0; Cr41_final_prev <= 0;
+ 		Cr51_final <= 0; Cr51_final_prev <= 0;
+ 		Cr61_final <= 0; Cr61_final_prev <= 0;
+ 		Cr71_final <= 0; Cr71_final_prev <= 0;
+ 		Cr81_final <= 0; Cr81_final_prev <= 0;
 		end
 	else if (count_4 & enable_1) begin
-		Cb21_final <= Cb21; Cb21_final_prev <= Cb21_final;
-		Cb31_final <= Cb31; Cb31_final_prev <= Cb31_final;
-		Cb41_final <= Cb41; Cb41_final_prev <= Cb41_final;
-		Cb51_final <= Cb51; Cb51_final_prev <= Cb51_final;
-		Cb61_final <= Cb61; Cb61_final_prev <= Cb61_final;
-		Cb71_final <= Cb71; Cb71_final_prev <= Cb71_final;
-		Cb81_final <= Cb81; Cb81_final_prev <= Cb81_final;
+		Cr21_final <= Cr21; Cr21_final_prev <= Cr21_final;
+		Cr31_final <= Cr31; Cr31_final_prev <= Cr31_final;
+		Cr41_final <= Cr41; Cr41_final_prev <= Cr41_final;
+		Cr51_final <= Cr51; Cr51_final_prev <= Cr51_final;
+		Cr61_final <= Cr61; Cr61_final_prev <= Cr61_final;
+		Cr71_final <= Cr71; Cr71_final_prev <= Cr71_final;
+		Cr81_final <= Cr81; Cr81_final_prev <= Cr81_final;
 		end
 end
 
 always @(posedge clk)
 begin
 	if (rst) begin
- 		Cb21_final_diff <= 0; Cb31_final_diff <= 0;
- 		Cb41_final_diff <= 0; Cb51_final_diff <= 0;
- 		Cb61_final_diff <= 0; Cb71_final_diff <= 0;
- 		Cb81_final_diff <= 0;	
+ 		Cr21_final_diff <= 0; Cr31_final_diff <= 0;
+ 		Cr41_final_diff <= 0; Cr51_final_diff <= 0;
+ 		Cr61_final_diff <= 0; Cr71_final_diff <= 0;
+ 		Cr81_final_diff <= 0;
 		end
 	else if (count_5 & enable_1) begin 
-		Cb21_final_diff <= Cb21_final - Cb21_final_prev;	
-		Cb31_final_diff <= Cb31_final - Cb31_final_prev;	
-		Cb41_final_diff <= Cb41_final - Cb41_final_prev;	
-		Cb51_final_diff <= Cb51_final - Cb51_final_prev;	
-		Cb61_final_diff <= Cb61_final - Cb61_final_prev;	
-		Cb71_final_diff <= Cb71_final - Cb71_final_prev;	
-		Cb81_final_diff <= Cb81_final - Cb81_final_prev;		
+/*		Cr21_final_diff <= Cr21_final - Cr21_final_prev;
+		Cr31_final_diff <= Cr31_final - Cr31_final_prev;
+		Cr41_final_diff <= Cr41_final - Cr41_final_prev;
+		Cr51_final_diff <= Cr51_final - Cr51_final_prev;
+		Cr61_final_diff <= Cr61_final - Cr61_final_prev;
+		Cr71_final_diff <= Cr71_final - Cr71_final_prev;
+		Cr81_final_diff <= Cr81_final - Cr81_final_prev;	*/
+		Cr21_final_diff <= buf_Cr21_final_diff;
+		Cr31_final_diff <= buf_Cr31_final_diff;
+		Cr41_final_diff <= buf_Cr41_final_diff;
+		Cr51_final_diff <= buf_Cr51_final_diff;
+		Cr61_final_diff <= buf_Cr61_final_diff;
+		Cr71_final_diff <= buf_Cr71_final_diff;
+		Cr81_final_diff <= buf_Cr81_final_diff;
 		end
 end
 
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u72 (Cr21_final, ~Cr21_final_prev + 1, buf_Cr21_final_diff);
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u73 (Cr31_final, ~Cr31_final_prev + 1, buf_Cr31_final_diff);
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u74 (Cr41_final, ~Cr41_final_prev + 1, buf_Cr41_final_diff);
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u75 (Cr51_final, ~Cr51_final_prev + 1, buf_Cr51_final_diff);
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u76 (Cr61_final, ~Cr61_final_prev + 1, buf_Cr61_final_diff);
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u77 (Cr71_final, ~Cr71_final_prev + 1, buf_Cr71_final_diff);
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u78 (Cr81_final, ~Cr81_final_prev + 1, buf_Cr81_final_diff);
+
 always @(posedge clk)
 begin
 	case (count)
-	3'b000:		Cb2_mul_input <= T21;
-	3'b001:		Cb2_mul_input <= T22;
-	3'b010:		Cb2_mul_input <= T23;
-	3'b011:		Cb2_mul_input <= T24;
-	3'b100:		Cb2_mul_input <= T25;
-	3'b101:		Cb2_mul_input <= T26;
-	3'b110:		Cb2_mul_input <= T27;
-	3'b111:		Cb2_mul_input <= T28;
+	3'b000:		Cr2_mul_input <= T21;
+	3'b001:		Cr2_mul_input <= T22;
+	3'b010:		Cr2_mul_input <= T23;
+	3'b011:		Cr2_mul_input <= T24;
+	3'b100:		Cr2_mul_input <= T25;
+	3'b101:		Cr2_mul_input <= T26;
+	3'b110:		Cr2_mul_input <= T27;
+	3'b111:		Cr2_mul_input <= T28;
 	endcase
 end
 
 always @(posedge clk)
 begin
 	case (count)
-	3'b000:		Cb3_mul_input <= T31;
-	3'b001:		Cb3_mul_input <= T32;
-	3'b010:		Cb3_mul_input <= T33;
-	3'b011:		Cb3_mul_input <= T34;
-	3'b100:		Cb3_mul_input <= T34;
-	3'b101:		Cb3_mul_input <= T33;
-	3'b110:		Cb3_mul_input <= T32;
-	3'b111:		Cb3_mul_input <= T31;
+	3'b000:		Cr3_mul_input <= T31;
+	3'b001:		Cr3_mul_input <= T32;
+	3'b010:		Cr3_mul_input <= T33;
+	3'b011:		Cr3_mul_input <= T34;
+	3'b100:		Cr3_mul_input <= T34;
+	3'b101:		Cr3_mul_input <= T33;
+	3'b110:		Cr3_mul_input <= T32;
+	3'b111:		Cr3_mul_input <= T31;
 	endcase
 end
 
 always @(posedge clk)
 begin
 	case (count)
-	3'b000:		Cb4_mul_input <= T22;
-	3'b001:		Cb4_mul_input <= T25;
-	3'b010:		Cb4_mul_input <= T28;
-	3'b011:		Cb4_mul_input <= T26;
-	3'b100:		Cb4_mul_input <= T23;
-	3'b101:		Cb4_mul_input <= T21;
-	3'b110:		Cb4_mul_input <= T24;
-	3'b111:		Cb4_mul_input <= T27;
+	3'b000:		Cr4_mul_input <= T22;
+	3'b001:		Cr4_mul_input <= T25;
+	3'b010:		Cr4_mul_input <= T28;
+	3'b011:		Cr4_mul_input <= T26;
+	3'b100:		Cr4_mul_input <= T23;
+	3'b101:		Cr4_mul_input <= T21;
+	3'b110:		Cr4_mul_input <= T24;
+	3'b111:		Cr4_mul_input <= T27;
 	endcase
 end
 
 always @(posedge clk)
 begin
 	case (count)
-	3'b000:		Cb5_mul_input <= T1;
-	3'b001:		Cb5_mul_input <= T52;
-	3'b010:		Cb5_mul_input <= T52;
-	3'b011:		Cb5_mul_input <= T1;
-	3'b100:		Cb5_mul_input <= T1;
-	3'b101:		Cb5_mul_input <= T52;
-	3'b110:		Cb5_mul_input <= T52;
-	3'b111:		Cb5_mul_input <= T1;
+	3'b000:		Cr5_mul_input <= T1;
+	3'b001:		Cr5_mul_input <= T52;
+	3'b010:		Cr5_mul_input <= T52;
+	3'b011:		Cr5_mul_input <= T1;
+	3'b100:		Cr5_mul_input <= T1;
+	3'b101:		Cr5_mul_input <= T52;
+	3'b110:		Cr5_mul_input <= T52;
+	3'b111:		Cr5_mul_input <= T1;
 	endcase
 end
 
 always @(posedge clk)
 begin
 	case (count)
-	3'b000:		Cb6_mul_input <= T23;
-	3'b001:		Cb6_mul_input <= T28;
-	3'b010:		Cb6_mul_input <= T24;
-	3'b011:		Cb6_mul_input <= T22;
-	3'b100:		Cb6_mul_input <= T27;
-	3'b101:		Cb6_mul_input <= T25;
-	3'b110:		Cb6_mul_input <= T21;
-	3'b111:		Cb6_mul_input <= T26;
+	3'b000:		Cr6_mul_input <= T23;
+	3'b001:		Cr6_mul_input <= T28;
+	3'b010:		Cr6_mul_input <= T24;
+	3'b011:		Cr6_mul_input <= T22;
+	3'b100:		Cr6_mul_input <= T27;
+	3'b101:		Cr6_mul_input <= T25;
+	3'b110:		Cr6_mul_input <= T21;
+	3'b111:		Cr6_mul_input <= T26;
 	endcase
 end
 
 always @(posedge clk)
 begin
 	case (count)
-	3'b000:		Cb7_mul_input <= T32;
-	3'b001:		Cb7_mul_input <= T34;
-	3'b010:		Cb7_mul_input <= T31;
-	3'b011:		Cb7_mul_input <= T33;
-	3'b100:		Cb7_mul_input <= T33;
-	3'b101:		Cb7_mul_input <= T31;
-	3'b110:		Cb7_mul_input <= T34;
-	3'b111:		Cb7_mul_input <= T32;
+	3'b000:		Cr7_mul_input <= T32;
+	3'b001:		Cr7_mul_input <= T34;
+	3'b010:		Cr7_mul_input <= T31;
+	3'b011:		Cr7_mul_input <= T33;
+	3'b100:		Cr7_mul_input <= T33;
+	3'b101:		Cr7_mul_input <= T31;
+	3'b110:		Cr7_mul_input <= T34;
+	3'b111:		Cr7_mul_input <= T32;
 	endcase
 end
 
 always @(posedge clk)
 begin
 	case (count)
-	3'b000:		Cb8_mul_input <= T24;
-	3'b001:		Cb8_mul_input <= T26;
-	3'b010:		Cb8_mul_input <= T22;
-	3'b011:		Cb8_mul_input <= T28;
-	3'b100:		Cb8_mul_input <= T21;
-	3'b101:		Cb8_mul_input <= T27;
-	3'b110:		Cb8_mul_input <= T23;
-	3'b111:		Cb8_mul_input <= T25;
+	3'b000:		Cr8_mul_input <= T24;
+	3'b001:		Cr8_mul_input <= T26;
+	3'b010:		Cr8_mul_input <= T22;
+	3'b011:		Cr8_mul_input <= T28;
+	3'b100:		Cr8_mul_input <= T21;
+	3'b101:		Cr8_mul_input <= T27;
+	3'b110:		Cr8_mul_input <= T23;
+	3'b111:		Cr8_mul_input <= T25;
 	endcase
 end
 
@@ -789,44 +931,44 @@ always @(posedge clk)
 begin
 	if (rst) begin
  		data_1 <= 0;
- 		Cb11_final_1 <= 0; Cb21_final_1 <= 0; Cb31_final_1 <= 0; Cb41_final_1 <= 0;
-		Cb51_final_1 <= 0; Cb61_final_1 <= 0; Cb71_final_1 <= 0; Cb81_final_1 <= 0;
-		Cb11_final_2 <= 0; Cb21_final_2 <= 0; Cb31_final_2 <= 0; Cb41_final_2 <= 0;
-		Cb51_final_2 <= 0; Cb61_final_2 <= 0; Cb71_final_2 <= 0; Cb81_final_2 <= 0;
-		Cb11_final_3 <= 0; Cb11_final_4 <= 0;
+ 		Cr11_final_1 <= 0; Cr21_final_1 <= 0; Cr31_final_1 <= 0; Cr41_final_1 <= 0;
+		Cr51_final_1 <= 0; Cr61_final_1 <= 0; Cr71_final_1 <= 0; Cr81_final_1 <= 0;
+		Cr11_final_2 <= 0; Cr21_final_2 <= 0; Cr31_final_2 <= 0; Cr41_final_2 <= 0;
+		Cr51_final_2 <= 0; Cr61_final_2 <= 0; Cr71_final_2 <= 0; Cr81_final_2 <= 0;
+		Cr11_final_3 <= 0; Cr11_final_4 <= 0;
 		end
 	else if (enable) begin
 		data_1 <= data_in;  
-		Cb11_final_1 <= Cb11_final[13] ? Cb11_final[24:14] + 1 : Cb11_final[24:14];
-		Cb11_final_2[31:11] <= Cb11_final_1[10] ? 21'b111111111111111111111 : 21'b000000000000000000000;
-		Cb11_final_2[10:0] <= Cb11_final_1;
-		// Need to sign extend Cb11_final_1 and the other registers to store a negative 
+		Cr11_final_1 <= Cr11_final[13] ? Cr11_final[24:14] + 1 : Cr11_final[24:14];
+		Cr11_final_2[31:11] <= Cr11_final_1[10] ? 21'b111111111111111111111 : 21'b000000000000000000000;
+		Cr11_final_2[10:0] <= Cr11_final_1;
+		// Need to sign extend Cr11_final_1 and the other registers to store a negative
 		// number as a twos complement number.  If you don't sign extend, then a negative number
 		// will be stored incorrectly as a positive number.  For example, -215 would be stored
 		// as 1833 without sign extending
-		Cb11_final_3 <= Cb11_final_2;
-		Cb11_final_4 <= Cb11_final_3;
-		Cb21_final_1 <= Cb21_final_diff[13] ? Cb21_final_diff[24:14] + 1 : Cb21_final_diff[24:14];
-		Cb21_final_2[31:11] <= Cb21_final_1[10] ? 21'b111111111111111111111 : 21'b000000000000000000000;
-		Cb21_final_2[10:0] <= Cb21_final_1;
-		Cb31_final_1 <= Cb31_final_diff[13] ? Cb31_final_diff[24:14] + 1 : Cb31_final_diff[24:14];
-		Cb31_final_2[31:11] <= Cb31_final_1[10] ? 21'b111111111111111111111 : 21'b000000000000000000000;
-		Cb31_final_2[10:0] <= Cb31_final_1;
-		Cb41_final_1 <= Cb41_final_diff[13] ? Cb41_final_diff[24:14] + 1 : Cb41_final_diff[24:14];
-		Cb41_final_2[31:11] <= Cb41_final_1[10] ? 21'b111111111111111111111 : 21'b000000000000000000000;
-		Cb41_final_2[10:0] <= Cb41_final_1;
-		Cb51_final_1 <= Cb51_final_diff[13] ? Cb51_final_diff[24:14] + 1 : Cb51_final_diff[24:14];
-		Cb51_final_2[31:11] <= Cb51_final_1[10] ? 21'b111111111111111111111 : 21'b000000000000000000000;
-		Cb51_final_2[10:0] <= Cb51_final_1;
-		Cb61_final_1 <= Cb61_final_diff[13] ? Cb61_final_diff[24:14] + 1 : Cb61_final_diff[24:14];
-		Cb61_final_2[31:11] <= Cb61_final_1[10] ? 21'b111111111111111111111 : 21'b000000000000000000000;
-		Cb61_final_2[10:0] <= Cb61_final_1;
-		Cb71_final_1 <= Cb71_final_diff[13] ? Cb71_final_diff[24:14] + 1 : Cb71_final_diff[24:14];
-		Cb71_final_2[31:11] <= Cb71_final_1[10] ? 21'b111111111111111111111 : 21'b000000000000000000000;
-		Cb71_final_2[10:0] <= Cb71_final_1;
-		Cb81_final_1 <= Cb81_final_diff[13] ? Cb81_final_diff[24:14] + 1 : Cb81_final_diff[24:14];
-		Cb81_final_2[31:11] <= Cb81_final_1[10] ? 21'b111111111111111111111 : 21'b000000000000000000000;
-		Cb81_final_2[10:0] <= Cb81_final_1;
+		Cr11_final_3 <= Cr11_final_2;
+		Cr11_final_4 <= Cr11_final_3;
+		Cr21_final_1 <= Cr21_final_diff[13] ? Cr21_final_diff[24:14] + 1 : Cr21_final_diff[24:14];
+		Cr21_final_2[31:11] <= Cr21_final_1[10] ? 21'b111111111111111111111 : 21'b000000000000000000000;
+		Cr21_final_2[10:0] <= Cr21_final_1;
+		Cr31_final_1 <= Cr31_final_diff[13] ? Cr31_final_diff[24:14] + 1 : Cr31_final_diff[24:14];
+		Cr31_final_2[31:11] <= Cr31_final_1[10] ? 21'b111111111111111111111 : 21'b000000000000000000000;
+		Cr31_final_2[10:0] <= Cr31_final_1;
+		Cr41_final_1 <= Cr41_final_diff[13] ? Cr41_final_diff[24:14] + 1 : Cr41_final_diff[24:14];
+		Cr41_final_2[31:11] <= Cr41_final_1[10] ? 21'b111111111111111111111 : 21'b000000000000000000000;
+		Cr41_final_2[10:0] <= Cr41_final_1;
+		Cr51_final_1 <= Cr51_final_diff[13] ? Cr51_final_diff[24:14] + 1 : Cr51_final_diff[24:14];
+		Cr51_final_2[31:11] <= Cr51_final_1[10] ? 21'b111111111111111111111 : 21'b000000000000000000000;
+		Cr51_final_2[10:0] <= Cr51_final_1;
+		Cr61_final_1 <= Cr61_final_diff[13] ? Cr61_final_diff[24:14] + 1 : Cr61_final_diff[24:14];
+		Cr61_final_2[31:11] <= Cr61_final_1[10] ? 21'b111111111111111111111 : 21'b000000000000000000000;
+		Cr61_final_2[10:0] <= Cr61_final_1;
+		Cr71_final_1 <= Cr71_final_diff[13] ? Cr71_final_diff[24:14] + 1 : Cr71_final_diff[24:14];
+		Cr71_final_2[31:11] <= Cr71_final_1[10] ? 21'b111111111111111111111 : 21'b000000000000000000000;
+		Cr71_final_2[10:0] <= Cr71_final_1;
+		Cr81_final_1 <= Cr81_final_diff[13] ? Cr81_final_diff[24:14] + 1 : Cr81_final_diff[24:14];
+		Cr81_final_2[31:11] <= Cr81_final_1[10] ? 21'b111111111111111111111 : 21'b000000000000000000000;
+		Cr81_final_2[10:0] <= Cr81_final_1;
 		// The bit in place 13 is the fraction part, for rounding purposes
 		// if it is 1, then you need to add 1 to the bits in 22-14, 
 		// if bit 13 is 0, then the bits in 22-14 won't change

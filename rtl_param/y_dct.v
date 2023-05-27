@@ -82,6 +82,8 @@ integer Ti1, Ti21, Ti22, Ti23, Ti24, Ti25, Ti26, Ti27, Ti28, Ti31, Ti32, Ti33, T
 
 reg [24:0] Y_temp_11;
 reg [24:0] Y11, Y21, Y31, Y41, Y51, Y61, Y71, Y81, Y11_final;
+reg [24:0] buf_Y11, buf_Y21, buf_Y31, buf_Y41, buf_Y51, buf_Y61, buf_Y71, buf_Y81;
+
 reg [31:0] Y_temp_21, Y_temp_31, Y_temp_41, Y_temp_51;
 reg [31:0] Y_temp_61, Y_temp_71, Y_temp_81;
 reg [31:0] Z_temp_11, Z_temp_12, Z_temp_13, Z_temp_14;
@@ -100,6 +102,7 @@ reg [31:0] Z_temp_71, Z_temp_72, Z_temp_73, Z_temp_74;
 reg [31:0] Z_temp_75, Z_temp_76, Z_temp_77, Z_temp_78;
 reg [31:0] Z_temp_81, Z_temp_82, Z_temp_83, Z_temp_84;
 reg [31:0] Z_temp_85, Z_temp_86, Z_temp_87, Z_temp_88;
+
 reg [26:0] Z11, Z12, Z13, Z14, Z15, Z16, Z17, Z18;
 reg [26:0] Z21, Z22, Z23, Z24, Z25, Z26, Z27, Z28;
 reg [26:0] Z31, Z32, Z33, Z34, Z35, Z36, Z37, Z38;
@@ -108,10 +111,20 @@ reg [26:0] Z51, Z52, Z53, Z54, Z55, Z56, Z57, Z58;
 reg [26:0] Z61, Z62, Z63, Z64, Z65, Z66, Z67, Z68;
 reg [26:0] Z71, Z72, Z73, Z74, Z75, Z76, Z77, Z78;
 reg [26:0] Z81, Z82, Z83, Z84, Z85, Z86, Z87, Z88;
-reg [31:0]  Y11_final_2, Y21_final_2, Y11_final_3, Y11_final_4, Y31_final_2, Y41_final_2;
-reg [31:0]  Y51_final_2, Y61_final_2, Y71_final_2, Y81_final_2;
-reg [12:0]  Y11_final_1, Y21_final_1, Y31_final_1, Y41_final_1;
-reg [12:0]  Y51_final_1, Y61_final_1, Y71_final_1, Y81_final_1;
+
+reg [26:0] buf_Z11, buf_Z12, buf_Z13, buf_Z14, buf_Z15, buf_Z16, buf_Z17, buf_Z18;
+reg [26:0] buf_Z21, buf_Z22, buf_Z23, buf_Z24, buf_Z25, buf_Z26, buf_Z27, buf_Z28;
+reg [26:0] buf_Z31, buf_Z32, buf_Z33, buf_Z34, buf_Z35, buf_Z36, buf_Z37, buf_Z38;
+reg [26:0] buf_Z41, buf_Z42, buf_Z43, buf_Z44, buf_Z45, buf_Z46, buf_Z47, buf_Z48;
+reg [26:0] buf_Z51, buf_Z52, buf_Z53, buf_Z54, buf_Z55, buf_Z56, buf_Z57, buf_Z58;
+reg [26:0] buf_Z61, buf_Z62, buf_Z63, buf_Z64, buf_Z65, buf_Z66, buf_Z67, buf_Z68;
+reg [26:0] buf_Z71, buf_Z72, buf_Z73, buf_Z74, buf_Z75, buf_Z76, buf_Z77, buf_Z78;
+reg [26:0] buf_Z81, buf_Z82, buf_Z83, buf_Z84, buf_Z85, buf_Z86, buf_Z87, buf_Z88;
+
+reg [31:0] Y11_final_2, Y21_final_2, Y11_final_3, Y11_final_4, Y31_final_2, Y41_final_2;
+reg [31:0] Y51_final_2, Y61_final_2, Y71_final_2, Y81_final_2;
+reg [12:0] Y11_final_1, Y21_final_1, Y31_final_1, Y41_final_1;
+reg [12:0] Y51_final_1, Y61_final_1, Y71_final_1, Y81_final_1;
 reg [24:0] Y21_final, Y31_final, Y41_final, Y51_final;
 reg [24:0] Y61_final, Y71_final, Y81_final;
 reg [24:0] Y21_final_prev, Y21_final_diff;
@@ -121,6 +134,15 @@ reg [24:0] Y51_final_prev, Y51_final_diff;
 reg [24:0] Y61_final_prev, Y61_final_diff;
 reg [24:0] Y71_final_prev, Y71_final_diff;
 reg [24:0] Y81_final_prev, Y81_final_diff;
+
+reg [24:0] buf_Y21_final_diff;
+reg [24:0] buf_Y31_final_diff;
+reg [24:0] buf_Y41_final_diff;
+reg [24:0] buf_Y51_final_diff;
+reg [24:0] buf_Y61_final_diff;
+reg [24:0] buf_Y71_final_diff;
+reg [24:0] buf_Y81_final_diff;
+
 reg [10:0] Z11_final, Z12_final, Z13_final, Z14_final;
 reg [10:0] Z15_final, Z16_final, Z17_final, Z18_final;
 reg [10:0] Z21_final, Z22_final, Z23_final, Z24_final;
@@ -270,24 +292,113 @@ begin
 		Z85 <= 0; Z86 <= 0; Z87 <= 0; Z88 <= 0;
 		end
 	else if (enable & count_9) begin
-		Z11 <= Z_temp_11 + Z11; Z12 <= Z_temp_12 + Z12; Z13 <= Z_temp_13 + Z13; Z14 <= Z_temp_14 + Z14;
-		Z15 <= Z_temp_15 + Z15; Z16 <= Z_temp_16 + Z16; Z17 <= Z_temp_17 + Z17; Z18 <= Z_temp_18 + Z18;
-		Z21 <= Z_temp_21 + Z21; Z22 <= Z_temp_22 + Z22; Z23 <= Z_temp_23 + Z23; Z24 <= Z_temp_24 + Z24;
-		Z25 <= Z_temp_25 + Z25; Z26 <= Z_temp_26 + Z26; Z27 <= Z_temp_27 + Z27; Z28 <= Z_temp_28 + Z28;
-		Z31 <= Z_temp_31 + Z31; Z32 <= Z_temp_32 + Z32; Z33 <= Z_temp_33 + Z33; Z34 <= Z_temp_34 + Z34;
-		Z35 <= Z_temp_35 + Z35; Z36 <= Z_temp_36 + Z36; Z37 <= Z_temp_37 + Z37; Z38 <= Z_temp_38 + Z38;
-		Z41 <= Z_temp_41 + Z41; Z42 <= Z_temp_42 + Z42; Z43 <= Z_temp_43 + Z43; Z44 <= Z_temp_44 + Z44;
-		Z45 <= Z_temp_45 + Z45; Z46 <= Z_temp_46 + Z46; Z47 <= Z_temp_47 + Z47; Z48 <= Z_temp_48 + Z48;
-		Z51 <= Z_temp_51 + Z51; Z52 <= Z_temp_52 + Z52; Z53 <= Z_temp_53 + Z53; Z54 <= Z_temp_54 + Z54;
-		Z55 <= Z_temp_55 + Z55; Z56 <= Z_temp_56 + Z56; Z57 <= Z_temp_57 + Z57; Z58 <= Z_temp_58 + Z58;
-		Z61 <= Z_temp_61 + Z61; Z62 <= Z_temp_62 + Z62; Z63 <= Z_temp_63 + Z63; Z64 <= Z_temp_64 + Z64;
-		Z65 <= Z_temp_65 + Z65; Z66 <= Z_temp_66 + Z66; Z67 <= Z_temp_67 + Z67; Z68 <= Z_temp_68 + Z68;
-		Z71 <= Z_temp_71 + Z71; Z72 <= Z_temp_72 + Z72; Z73 <= Z_temp_73 + Z73; Z74 <= Z_temp_74 + Z74;
-		Z75 <= Z_temp_75 + Z75; Z76 <= Z_temp_76 + Z76; Z77 <= Z_temp_77 + Z77; Z78 <= Z_temp_78 + Z78;
-		Z81 <= Z_temp_81 + Z81; Z82 <= Z_temp_82 + Z82; Z83 <= Z_temp_83 + Z83; Z84 <= Z_temp_84 + Z84;
-		Z85 <= Z_temp_85 + Z85; Z86 <= Z_temp_86 + Z86; Z87 <= Z_temp_87 + Z87; Z88 <= Z_temp_88 + Z88;
+		// Z11 <= Z_temp_11 + Z11; Z12 <= Z_temp_12 + Z12; Z13 <= Z_temp_13 + Z13; Z14 <= Z_temp_14 + Z14;
+		// Z15 <= Z_temp_15 + Z15; Z16 <= Z_temp_16 + Z16; Z17 <= Z_temp_17 + Z17; Z18 <= Z_temp_18 + Z18;
+		// Z21 <= Z_temp_21 + Z21; Z22 <= Z_temp_22 + Z22; Z23 <= Z_temp_23 + Z23; Z24 <= Z_temp_24 + Z24;
+		// Z25 <= Z_temp_25 + Z25; Z26 <= Z_temp_26 + Z26; Z27 <= Z_temp_27 + Z27; Z28 <= Z_temp_28 + Z28;
+		// Z31 <= Z_temp_31 + Z31; Z32 <= Z_temp_32 + Z32; Z33 <= Z_temp_33 + Z33; Z34 <= Z_temp_34 + Z34;
+		// Z35 <= Z_temp_35 + Z35; Z36 <= Z_temp_36 + Z36; Z37 <= Z_temp_37 + Z37; Z38 <= Z_temp_38 + Z38;
+		// Z41 <= Z_temp_41 + Z41; Z42 <= Z_temp_42 + Z42; Z43 <= Z_temp_43 + Z43; Z44 <= Z_temp_44 + Z44;
+		// Z45 <= Z_temp_45 + Z45; Z46 <= Z_temp_46 + Z46; Z47 <= Z_temp_47 + Z47; Z48 <= Z_temp_48 + Z48;
+		// Z51 <= Z_temp_51 + Z51; Z52 <= Z_temp_52 + Z52; Z53 <= Z_temp_53 + Z53; Z54 <= Z_temp_54 + Z54;
+		// Z55 <= Z_temp_55 + Z55; Z56 <= Z_temp_56 + Z56; Z57 <= Z_temp_57 + Z57; Z58 <= Z_temp_58 + Z58;
+		// Z61 <= Z_temp_61 + Z61; Z62 <= Z_temp_62 + Z62; Z63 <= Z_temp_63 + Z63; Z64 <= Z_temp_64 + Z64;
+		// Z65 <= Z_temp_65 + Z65; Z66 <= Z_temp_66 + Z66; Z67 <= Z_temp_67 + Z67; Z68 <= Z_temp_68 + Z68;
+		// Z71 <= Z_temp_71 + Z71; Z72 <= Z_temp_72 + Z72; Z73 <= Z_temp_73 + Z73; Z74 <= Z_temp_74 + Z74;
+		// Z75 <= Z_temp_75 + Z75; Z76 <= Z_temp_76 + Z76; Z77 <= Z_temp_77 + Z77; Z78 <= Z_temp_78 + Z78;
+		// Z81 <= Z_temp_81 + Z81; Z82 <= Z_temp_82 + Z82; Z83 <= Z_temp_83 + Z83; Z84 <= Z_temp_84 + Z84;
+		// Z85 <= Z_temp_85 + Z85; Z86 <= Z_temp_86 + Z86; Z87 <= Z_temp_87 + Z87; Z88 <= Z_temp_88 + Z88;
+
+		Z11 <= buf_Z11; Z12 <= buf_Z12; Z13 <= buf_Z13; Z14 <= buf_Z14;
+		Z15 <= buf_Z15; Z16 <= buf_Z16; Z17 <= buf_Z17; Z18 <= buf_Z18;
+		Z21 <= buf_Z21; Z22 <= buf_Z22; Z23 <= buf_Z23; Z24 <= buf_Z24;
+		Z25 <= buf_Z25; Z26 <= buf_Z26; Z27 <= buf_Z27; Z28 <= buf_Z28;
+		Z31 <= buf_Z31; Z32 <= buf_Z32; Z33 <= buf_Z33; Z34 <= buf_Z34;
+		Z35 <= buf_Z35; Z36 <= buf_Z36; Z37 <= buf_Z37; Z38 <= buf_Z38;
+		Z41 <= buf_Z41; Z42 <= buf_Z42; Z43 <= buf_Z43; Z44 <= buf_Z44;
+		Z45 <= buf_Z45; Z46 <= buf_Z46; Z47 <= buf_Z47; Z48 <= buf_Z48;
+		Z51 <= buf_Z51; Z52 <= buf_Z52; Z53 <= buf_Z53; Z54 <= buf_Z54;
+		Z55 <= buf_Z55; Z56 <= buf_Z56; Z57 <= buf_Z57; Z58 <= buf_Z58;
+		Z61 <= buf_Z61; Z62 <= buf_Z62; Z63 <= buf_Z63; Z64 <= buf_Z64;
+		Z65 <= buf_Z65; Z66 <= buf_Z66; Z67 <= buf_Z67; Z68 <= buf_Z68;
+		Z71 <= buf_Z71; Z72 <= buf_Z72; Z73 <= buf_Z73; Z74 <= buf_Z74;
+		Z75 <= buf_Z75; Z76 <= buf_Z76; Z77 <= buf_Z77; Z78 <= buf_Z78;
+		Z81 <= buf_Z81; Z82 <= buf_Z82; Z83 <= buf_Z83; Z84 <= buf_Z84;
+		Z85 <= buf_Z85; Z86 <= buf_Z86; Z87 <= buf_Z87; Z88 <= buf_Z88;
 		end	
 end
+
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u01 (Z_temp_11, Z11, buf_Z11);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u02 (Z_temp_12, Z12, buf_Z12);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u03 (Z_temp_13, Z13, buf_Z13);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u04 (Z_temp_14, Z14, buf_Z14);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u05 (Z_temp_15, Z15, buf_Z15);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u06 (Z_temp_16, Z16, buf_Z16);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u07 (Z_temp_17, Z17, buf_Z17);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u08 (Z_temp_18, Z18, buf_Z18);
+
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u09 (Z_temp_21, Z21, buf_Z21);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u10 (Z_temp_22, Z22, buf_Z22);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u11 (Z_temp_23, Z23, buf_Z23);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u12 (Z_temp_24, Z24, buf_Z24);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u13 (Z_temp_25, Z25, buf_Z25);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u14 (Z_temp_26, Z26, buf_Z26);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u15 (Z_temp_27, Z27, buf_Z27);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u16 (Z_temp_28, Z28, buf_Z28);
+
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u17 (Z_temp_31, Z31, buf_Z31);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u18 (Z_temp_32, Z32, buf_Z32);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u19 (Z_temp_33, Z33, buf_Z33);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u20 (Z_temp_34, Z34, buf_Z34);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u21 (Z_temp_35, Z35, buf_Z35);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u22 (Z_temp_36, Z36, buf_Z36);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u23 (Z_temp_37, Z37, buf_Z37);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u24 (Z_temp_38, Z38, buf_Z38);
+
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u25 (Z_temp_41, Z41, buf_Z41);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u26 (Z_temp_42, Z42, buf_Z42);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u27 (Z_temp_43, Z43, buf_Z43);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u28 (Z_temp_44, Z44, buf_Z44);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u29 (Z_temp_45, Z45, buf_Z45);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u30 (Z_temp_46, Z46, buf_Z46);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u31 (Z_temp_47, Z47, buf_Z47);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u32 (Z_temp_48, Z48, buf_Z48);
+
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u33 (Z_temp_51, Z51, buf_Z51);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u34 (Z_temp_52, Z52, buf_Z52);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u35 (Z_temp_53, Z53, buf_Z53);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u36 (Z_temp_54, Z54, buf_Z54);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u37 (Z_temp_55, Z55, buf_Z55);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u38 (Z_temp_56, Z56, buf_Z56);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u39 (Z_temp_57, Z57, buf_Z57);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u40 (Z_temp_58, Z58, buf_Z58);
+
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u41 (Z_temp_61, Z61, buf_Z61);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u42 (Z_temp_62, Z62, buf_Z62);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u43 (Z_temp_63, Z63, buf_Z63);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u44 (Z_temp_64, Z64, buf_Z64);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u45 (Z_temp_65, Z65, buf_Z65);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u46 (Z_temp_66, Z66, buf_Z66);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u47 (Z_temp_67, Z67, buf_Z67);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u48 (Z_temp_68, Z68, buf_Z68);
+
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u49 (Z_temp_71, Z71, buf_Z71);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u50 (Z_temp_72, Z72, buf_Z72);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u51 (Z_temp_73, Z73, buf_Z73);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u52 (Z_temp_74, Z74, buf_Z74);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u53 (Z_temp_75, Z75, buf_Z75);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u54 (Z_temp_76, Z76, buf_Z76);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u55 (Z_temp_77, Z77, buf_Z77);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u56 (Z_temp_78, Z78, buf_Z78);
+
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u57 (Z_temp_81, Z81, buf_Z81);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u58 (Z_temp_82, Z82, buf_Z82);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u59 (Z_temp_83, Z83, buf_Z83);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u60 (Z_temp_84, Z84, buf_Z84);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u61 (Z_temp_85, Z85, buf_Z85);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u62 (Z_temp_86, Z86, buf_Z86);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u63 (Z_temp_87, Z87, buf_Z87);
+[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u64 (Z_temp_88, Z88, buf_Z88);
 
 always @(posedge clk)
 begin
@@ -459,15 +570,31 @@ begin
 		Y81 <= 0;
 		end
 	else if (enable_1) begin
-		Y21 <= Y_temp_21 + Y21;
-		Y31 <= Y_temp_31 + Y31;
-		Y41 <= Y_temp_41 + Y41;
-		Y51 <= Y_temp_51 + Y51;
-		Y61 <= Y_temp_61 + Y61;
-		Y71 <= Y_temp_71 + Y71;
-		Y81 <= Y_temp_81 + Y81;
+		// Y21 <= Y_temp_21 + Y21;
+		// Y31 <= Y_temp_31 + Y31;
+		// Y41 <= Y_temp_41 + Y41;
+		// Y51 <= Y_temp_51 + Y51;
+		// Y61 <= Y_temp_61 + Y61;
+		// Y71 <= Y_temp_71 + Y71;
+		// Y81 <= Y_temp_81 + Y81;
+		Y21 <= buf_Y21;
+		Y31 <= buf_Y31;
+		Y41 <= buf_Y41;
+		Y51 <= buf_Y51;
+		Y61 <= buf_Y61;
+		Y71 <= buf_Y71;
+		Y81 <= buf_Y81;
 		end
 end 
+
+[[ADDER_2_TYPE]] #(32, [[ADDER_2_K]]) u65 (Y_temp_21, Y21, buf_Y21);
+[[ADDER_2_TYPE]] #(32, [[ADDER_2_K]]) u66 (Y_temp_31, Y31, buf_Y31);
+[[ADDER_2_TYPE]] #(32, [[ADDER_2_K]]) u67 (Y_temp_41, Y41, buf_Y41);
+[[ADDER_2_TYPE]] #(32, [[ADDER_2_K]]) u68 (Y_temp_51, Y51, buf_Y51);
+[[ADDER_2_TYPE]] #(32, [[ADDER_2_K]]) u69 (Y_temp_61, Y61, buf_Y61);
+[[ADDER_2_TYPE]] #(32, [[ADDER_2_K]]) u70 (Y_temp_71, Y71, buf_Y71);
+[[ADDER_2_TYPE]] #(32, [[ADDER_2_K]]) u71 (Y_temp_81, Y81, buf_Y81);
+
 
 always @(posedge clk)
 begin
@@ -576,15 +703,33 @@ begin
  		Y81_final_diff <= 0;	
 		end
 	else if (count_5 & enable_1) begin 
-		Y21_final_diff <= Y21_final - Y21_final_prev;	
-		Y31_final_diff <= Y31_final - Y31_final_prev;	
-		Y41_final_diff <= Y41_final - Y41_final_prev;	
-		Y51_final_diff <= Y51_final - Y51_final_prev;	
-		Y61_final_diff <= Y61_final - Y61_final_prev;	
-		Y71_final_diff <= Y71_final - Y71_final_prev;	
-		Y81_final_diff <= Y81_final - Y81_final_prev;		
+		// Y21_final_diff <= Y21_final - Y21_final_prev;
+		// Y31_final_diff <= Y31_final - Y31_final_prev;
+		// Y41_final_diff <= Y41_final - Y41_final_prev;
+		// Y51_final_diff <= Y51_final - Y51_final_prev;
+		// Y61_final_diff <= Y61_final - Y61_final_prev;
+		// Y71_final_diff <= Y71_final - Y71_final_prev;
+		// Y81_final_diff <= Y81_final - Y81_final_prev;
+		Y21_final_diff <= buf_Y21_final_diff;
+		Y31_final_diff <= buf_Y31_final_diff;
+		Y41_final_diff <= buf_Y41_final_diff;
+		Y51_final_diff <= buf_Y51_final_diff;
+		Y61_final_diff <= buf_Y61_final_diff;
+		Y71_final_diff <= buf_Y71_final_diff;
+		Y81_final_diff <= buf_Y81_final_diff;
 		end
 end
+
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u72 (Y21_final, ~Y21_final_prev + 1, buf_Y21_final_diff);
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u73 (Y31_final, ~Y31_final_prev + 1, buf_Y31_final_diff);
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u74 (Y41_final, ~Y41_final_prev + 1, buf_Y41_final_diff);
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u75 (Y51_final, ~Y51_final_prev + 1, buf_Y51_final_diff);
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u76 (Y61_final, ~Y61_final_prev + 1, buf_Y61_final_diff);
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u77 (Y71_final, ~Y71_final_prev + 1, buf_Y71_final_diff);
+[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u78 (Y81_final, ~Y81_final_prev + 1, buf_Y81_final_diff);
+
+
+
 always @(posedge clk)
 begin
 	case (count)

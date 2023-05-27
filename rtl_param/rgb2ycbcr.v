@@ -60,29 +60,31 @@ wire [13:0] CB3 = 14'd8192;
 wire [13:0] CR1 = 14'd8192;
 wire [13:0] CR2 = 14'd6860;
 wire [13:0] CR3 = 14'd1332;
-reg [21:0] Y_temp, CB_temp, CR_temp;
+reg [23:0] Y_temp, CB_temp, CR_temp;
 reg [21:0] Y1_product, Y2_product, Y3_product;
-wire [21:0] Y12_product;
+wire [22:0] Y12_product;
 reg [21:0] CB1_product, CB2_product, CB3_product;
-wire [21:0] CBc1_product, CBc12_product;
+wire [21:0] CBc1_product;
+wire [22:0]CBc12_product;
 reg [21:0] CR1_product, CR2_product, CR3_product;
-wire [21:0] CRc1_product, CRc12_product;
+wire [22:0] CRc1_product;
+wire [22:0] CRc12_product;
 reg [7:0] Y, CB, CR;
 reg	enable_1, enable_2, enable_out;
 wire [23:0] data_out = {CR, CB, Y};
 
-wire [21:0] buf_Y_temp, buf_CB_temp, buf_CR_temp;
+wire [23:0] buf_Y_temp, buf_CB_temp, buf_CR_temp;
 
 [[ADDER_1_TYPE]] #(22, [[ADDER_1_K]]) u1 (Y1_product, Y2_product, Y12_product);
-[[ADDER_1_TYPE]] #(22, [[ADDER_1_K]]) u2 (Y12_product, Y3_product, buf_Y_temp);
+[[ADDER_1_TYPE]] #(23, [[ADDER_1_K]]) u2 (Y12_product, {1'b0, Y3_product}, buf_Y_temp);
 
-[[ADDER_1_TYPE]] #(22, [[ADDER_1_K]]) u3 (22'd2097152, ~CB1_product, CBc1_product);
-[[ADDER_1_TYPE]] #(22, [[ADDER_1_K]]) u4 (CBc1_product, ~CB2_product, CBc12_product);
-[[ADDER_1_TYPE]] #(22, [[ADDER_1_K]]) u5 (CBc12_product, CB3_product, buf_CB_temp);
+[[ADDER_1_TYPE]] #(22, [[ADDER_1_K]]) u3 (22'd2097152, ~CB1_product + 1, CBc1_product);
+[[ADDER_1_TYPE]] #(22, [[ADDER_1_K]]) u4 (CBc1_product, ~CB2_product + 1, CBc12_product);
+[[ADDER_1_TYPE]] #(23, [[ADDER_1_K]]) u5 (CBc12_product, {1'b0, CB3_product}, buf_CB_temp);
 
 [[ADDER_1_TYPE]] #(22, [[ADDER_1_K]]) u6 (22'd2097152, CR1_product, CRc1_product);
-[[ADDER_1_TYPE]] #(22, [[ADDER_1_K]]) u7 (CRc1_product, ~CR2_product, CRc12_product);
-[[ADDER_1_TYPE]] #(22, [[ADDER_1_K]]) u8 (CRc12_product, ~CR3_product, buf_CR_temp);
+[[ADDER_1_TYPE]] #(23, [[ADDER_1_K]]) u7 (CRc1_product, ~{1'b0,CR2_product} + 1, CRc12_product);
+[[ADDER_1_TYPE]] #(23, [[ADDER_1_K]]) u8 (CRc12_product, ~{1'b0,CR3_product} + 1, buf_CR_temp);
 
 always @(posedge clk)
 begin

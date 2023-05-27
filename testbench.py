@@ -7,7 +7,7 @@ import os
 
 bitstream = []
 block_size = 64
-group = "study_param"
+group = "study_param_3"
 
 def clock_cycle(ckt=None, qty=1):
     if ckt is None:
@@ -45,7 +45,9 @@ def testbench_run(ckt=None, results_filename=None):
     #     # "images/f14.tif",
     #     ]
 
-    image_path = "images/balloons.tif"
+    #image_path = "images/balloons.tif"
+    image_path = "images/balloonsmall.tif"
+
     original_size = os.path.getsize(image_path)
 
     rst = results.ResultsTable(results_filename, ["ssim", "compression"])
@@ -171,7 +173,7 @@ def testbench_run(ckt=None, results_filename=None):
         (ssim_value, diff) = structural_similarity(img_ref, img_compare, full=True, win_size=1, use_sample_covariance=False)
         compressed_size = os.path.getsize(output_path)
         compression_ratio = compressed_size / original_size
-        print(f">>> ssim: {ssim_value:.6f} ")
+        print(f">>> ssim: {ssim_value:.6f}, compression: {compression_ratio:.3f}")
 
         rst.add(jpeg, {"ssim": f"{ssim_value:.6f}", "compression": f"{compression_ratio:.3f}"})
 
@@ -188,4 +190,4 @@ if __name__ == "__main__":
 
     for ckt_name in ckt_list:
         ckt = importlib.import_module(ckt_name)
-        testbench_run(ckt=ckt, results_filename="study_param/results.csv")
+        testbench_run(ckt=ckt, results_filename="study_param_2/results.csv")
