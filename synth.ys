@@ -1,0 +1,10 @@
+read_verilog /home/ysba/MAxPy/src/MAxPy/pdk/NanGate15nm.v /home/ysba/MAxPy/src/MAxPy/vlib/AxArith/*/*.v study_param_3/jpeg_top_copyA_8_DRUM_5/rtl/jpeg_top.v 
+hierarchy -top jpeg_top
+prep; flatten; synth
+clean -purge
+
+dfflibmap -liberty /home/ysba/MAxPy/src/MAxPy/pdk/NanGate15nm.lib
+#abc -liberty /home/ysba/MAxPy/src/MAxPy/pdk/NanGate15nm.lib
+clean -purge
+
+write_verilog -noattr -noexpr  study_param_3/jpeg_top_copyA_8_DRUM_5/netlist_yosys/jpeg_top.v

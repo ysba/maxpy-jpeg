@@ -330,77 +330,77 @@ begin
 		end
 end
 
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u01 (Z_temp_11, Z11, buf_Z11);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u02 (Z_temp_12, Z12, buf_Z12);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u03 (Z_temp_13, Z13, buf_Z13);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u04 (Z_temp_14, Z14, buf_Z14);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u05 (Z_temp_15, Z15, buf_Z15);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u06 (Z_temp_16, Z16, buf_Z16);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u07 (Z_temp_17, Z17, buf_Z17);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u08 (Z_temp_18, Z18, buf_Z18);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u01 (Z_temp_11, Z11, buf_Z11);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u02 (Z_temp_12, Z12, buf_Z12);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u03 (Z_temp_13, Z13, buf_Z13);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u04 (Z_temp_14, Z14, buf_Z14);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u05 (Z_temp_15, Z15, buf_Z15);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u06 (Z_temp_16, Z16, buf_Z16);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u07 (Z_temp_17, Z17, buf_Z17);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u08 (Z_temp_18, Z18, buf_Z18);
 
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u09 (Z_temp_21, Z21, buf_Z21);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u10 (Z_temp_22, Z22, buf_Z22);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u11 (Z_temp_23, Z23, buf_Z23);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u12 (Z_temp_24, Z24, buf_Z24);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u13 (Z_temp_25, Z25, buf_Z25);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u14 (Z_temp_26, Z26, buf_Z26);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u15 (Z_temp_27, Z27, buf_Z27);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u16 (Z_temp_28, Z28, buf_Z28);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u09 (Z_temp_21, Z21, buf_Z21);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u10 (Z_temp_22, Z22, buf_Z22);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u11 (Z_temp_23, Z23, buf_Z23);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u12 (Z_temp_24, Z24, buf_Z24);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u13 (Z_temp_25, Z25, buf_Z25);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u14 (Z_temp_26, Z26, buf_Z26);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u15 (Z_temp_27, Z27, buf_Z27);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u16 (Z_temp_28, Z28, buf_Z28);
 
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u17 (Z_temp_31, Z31, buf_Z31);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u18 (Z_temp_32, Z32, buf_Z32);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u19 (Z_temp_33, Z33, buf_Z33);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u20 (Z_temp_34, Z34, buf_Z34);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u21 (Z_temp_35, Z35, buf_Z35);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u22 (Z_temp_36, Z36, buf_Z36);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u23 (Z_temp_37, Z37, buf_Z37);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u24 (Z_temp_38, Z38, buf_Z38);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u17 (Z_temp_31, Z31, buf_Z31);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u18 (Z_temp_32, Z32, buf_Z32);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u19 (Z_temp_33, Z33, buf_Z33);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u20 (Z_temp_34, Z34, buf_Z34);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u21 (Z_temp_35, Z35, buf_Z35);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u22 (Z_temp_36, Z36, buf_Z36);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u23 (Z_temp_37, Z37, buf_Z37);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u24 (Z_temp_38, Z38, buf_Z38);
 
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u25 (Z_temp_41, Z41, buf_Z41);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u26 (Z_temp_42, Z42, buf_Z42);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u27 (Z_temp_43, Z43, buf_Z43);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u28 (Z_temp_44, Z44, buf_Z44);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u29 (Z_temp_45, Z45, buf_Z45);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u30 (Z_temp_46, Z46, buf_Z46);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u31 (Z_temp_47, Z47, buf_Z47);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u32 (Z_temp_48, Z48, buf_Z48);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u25 (Z_temp_41, Z41, buf_Z41);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u26 (Z_temp_42, Z42, buf_Z42);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u27 (Z_temp_43, Z43, buf_Z43);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u28 (Z_temp_44, Z44, buf_Z44);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u29 (Z_temp_45, Z45, buf_Z45);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u30 (Z_temp_46, Z46, buf_Z46);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u31 (Z_temp_47, Z47, buf_Z47);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u32 (Z_temp_48, Z48, buf_Z48);
 
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u33 (Z_temp_51, Z51, buf_Z51);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u34 (Z_temp_52, Z52, buf_Z52);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u35 (Z_temp_53, Z53, buf_Z53);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u36 (Z_temp_54, Z54, buf_Z54);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u37 (Z_temp_55, Z55, buf_Z55);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u38 (Z_temp_56, Z56, buf_Z56);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u39 (Z_temp_57, Z57, buf_Z57);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u40 (Z_temp_58, Z58, buf_Z58);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u33 (Z_temp_51, Z51, buf_Z51);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u34 (Z_temp_52, Z52, buf_Z52);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u35 (Z_temp_53, Z53, buf_Z53);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u36 (Z_temp_54, Z54, buf_Z54);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u37 (Z_temp_55, Z55, buf_Z55);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u38 (Z_temp_56, Z56, buf_Z56);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u39 (Z_temp_57, Z57, buf_Z57);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u40 (Z_temp_58, Z58, buf_Z58);
 
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u41 (Z_temp_61, Z61, buf_Z61);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u42 (Z_temp_62, Z62, buf_Z62);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u43 (Z_temp_63, Z63, buf_Z63);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u44 (Z_temp_64, Z64, buf_Z64);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u45 (Z_temp_65, Z65, buf_Z65);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u46 (Z_temp_66, Z66, buf_Z66);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u47 (Z_temp_67, Z67, buf_Z67);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u48 (Z_temp_68, Z68, buf_Z68);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u41 (Z_temp_61, Z61, buf_Z61);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u42 (Z_temp_62, Z62, buf_Z62);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u43 (Z_temp_63, Z63, buf_Z63);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u44 (Z_temp_64, Z64, buf_Z64);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u45 (Z_temp_65, Z65, buf_Z65);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u46 (Z_temp_66, Z66, buf_Z66);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u47 (Z_temp_67, Z67, buf_Z67);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u48 (Z_temp_68, Z68, buf_Z68);
 
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u49 (Z_temp_71, Z71, buf_Z71);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u50 (Z_temp_72, Z72, buf_Z72);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u51 (Z_temp_73, Z73, buf_Z73);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u52 (Z_temp_74, Z74, buf_Z74);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u53 (Z_temp_75, Z75, buf_Z75);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u54 (Z_temp_76, Z76, buf_Z76);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u55 (Z_temp_77, Z77, buf_Z77);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u56 (Z_temp_78, Z78, buf_Z78);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u49 (Z_temp_71, Z71, buf_Z71);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u50 (Z_temp_72, Z72, buf_Z72);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u51 (Z_temp_73, Z73, buf_Z73);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u52 (Z_temp_74, Z74, buf_Z74);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u53 (Z_temp_75, Z75, buf_Z75);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u54 (Z_temp_76, Z76, buf_Z76);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u55 (Z_temp_77, Z77, buf_Z77);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u56 (Z_temp_78, Z78, buf_Z78);
 
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u57 (Z_temp_81, Z81, buf_Z81);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u58 (Z_temp_82, Z82, buf_Z82);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u59 (Z_temp_83, Z83, buf_Z83);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u60 (Z_temp_84, Z84, buf_Z84);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u61 (Z_temp_85, Z85, buf_Z85);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u62 (Z_temp_86, Z86, buf_Z86);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u63 (Z_temp_87, Z87, buf_Z87);
-[[ADDER_2_TYPE]] #(27, [[ADDER_2_K]]) u64 (Z_temp_88, Z88, buf_Z88);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u57 (Z_temp_81, Z81, buf_Z81);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u58 (Z_temp_82, Z82, buf_Z82);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u59 (Z_temp_83, Z83, buf_Z83);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u60 (Z_temp_84, Z84, buf_Z84);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u61 (Z_temp_85, Z85, buf_Z85);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u62 (Z_temp_86, Z86, buf_Z86);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u63 (Z_temp_87, Z87, buf_Z87);
+[[AxA_TYPE]] #(27, [[AxA_K]]) u64 (Z_temp_88, Z88, buf_Z88);
 
 always @(posedge clk)
 begin
@@ -589,13 +589,13 @@ begin
 		end
 end
 
-[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u65 (Cr_temp_21, Cr21, buf_Cr21);
-[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u66 (Cr_temp_31, Cr31, buf_Cr31);
-[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u67 (Cr_temp_41, Cr41, buf_Cr41);
-[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u68 (Cr_temp_51, Cr51, buf_Cr51);
-[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u69 (Cr_temp_61, Cr61, buf_Cr61);
-[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u70 (Cr_temp_71, Cr71, buf_Cr71);
-[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u71 (Cr_temp_81, Cr81, buf_Cr81);
+[[AxA_TYPE]] #(25, [[AxA_K]]) u65 (Cr_temp_21, Cr21, buf_Cr21);
+[[AxA_TYPE]] #(25, [[AxA_K]]) u66 (Cr_temp_31, Cr31, buf_Cr31);
+[[AxA_TYPE]] #(25, [[AxA_K]]) u67 (Cr_temp_41, Cr41, buf_Cr41);
+[[AxA_TYPE]] #(25, [[AxA_K]]) u68 (Cr_temp_51, Cr51, buf_Cr51);
+[[AxA_TYPE]] #(25, [[AxA_K]]) u69 (Cr_temp_61, Cr61, buf_Cr61);
+[[AxA_TYPE]] #(25, [[AxA_K]]) u70 (Cr_temp_71, Cr71, buf_Cr71);
+[[AxA_TYPE]] #(25, [[AxA_K]]) u71 (Cr_temp_81, Cr81, buf_Cr81);
 
 always @(posedge clk)
 begin
@@ -721,13 +721,13 @@ begin
 		end
 end
 
-[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u72 (Cr21_final, ~Cr21_final_prev + 1, buf_Cr21_final_diff);
-[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u73 (Cr31_final, ~Cr31_final_prev + 1, buf_Cr31_final_diff);
-[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u74 (Cr41_final, ~Cr41_final_prev + 1, buf_Cr41_final_diff);
-[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u75 (Cr51_final, ~Cr51_final_prev + 1, buf_Cr51_final_diff);
-[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u76 (Cr61_final, ~Cr61_final_prev + 1, buf_Cr61_final_diff);
-[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u77 (Cr71_final, ~Cr71_final_prev + 1, buf_Cr71_final_diff);
-[[ADDER_2_TYPE]] #(25, [[ADDER_2_K]]) u78 (Cr81_final, ~Cr81_final_prev + 1, buf_Cr81_final_diff);
+[[AxA_TYPE]] #(25, [[AxA_K]]) u72 (Cr21_final, ~Cr21_final_prev + 1, buf_Cr21_final_diff);
+[[AxA_TYPE]] #(25, [[AxA_K]]) u73 (Cr31_final, ~Cr31_final_prev + 1, buf_Cr31_final_diff);
+[[AxA_TYPE]] #(25, [[AxA_K]]) u74 (Cr41_final, ~Cr41_final_prev + 1, buf_Cr41_final_diff);
+[[AxA_TYPE]] #(25, [[AxA_K]]) u75 (Cr51_final, ~Cr51_final_prev + 1, buf_Cr51_final_diff);
+[[AxA_TYPE]] #(25, [[AxA_K]]) u76 (Cr61_final, ~Cr61_final_prev + 1, buf_Cr61_final_diff);
+[[AxA_TYPE]] #(25, [[AxA_K]]) u77 (Cr71_final, ~Cr71_final_prev + 1, buf_Cr71_final_diff);
+[[AxA_TYPE]] #(25, [[AxA_K]]) u78 (Cr81_final, ~Cr81_final_prev + 1, buf_Cr81_final_diff);
 
 always @(posedge clk)
 begin

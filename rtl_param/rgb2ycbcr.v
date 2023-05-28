@@ -58,7 +58,7 @@ wire [13:0] CB1 = 14'd2764;
 wire [13:0] CB2 = 14'd5428;
 wire [13:0] CB3 = 14'd8192;
 wire [13:0] CR1 = 14'd8192;
-wire [13:0] CR2 = 14'd6860;
+reg [13:0] CR2 = 14'd6860;
 wire [13:0] CR3 = 14'd1332;
 reg [23:0] Y_temp, CB_temp, CR_temp;
 reg [21:0] Y1_product, Y2_product, Y3_product;
@@ -74,17 +74,35 @@ reg	enable_1, enable_2, enable_out;
 wire [23:0] data_out = {CR, CB, Y};
 
 wire [23:0] buf_Y_temp, buf_CB_temp, buf_CR_temp;
+wire [21:0] buf_Y1_product, buf_Y2_product, buf_Y3_product;
+wire [21:0] buf_CB1_product, buf_CB2_product, buf_CB3_product;
+wire [21:0] buf_CR1_product, buf_CR2_product, buf_CR3_product;
 
-[[ADDER_1_TYPE]] #(22, [[ADDER_1_K]]) u1 (Y1_product, Y2_product, Y12_product);
-[[ADDER_1_TYPE]] #(23, [[ADDER_1_K]]) u2 (Y12_product, {1'b0, Y3_product}, buf_Y_temp);
+[[AxA_TYPE]] #(22, [[AxA_K]]) u1 (Y1_product, Y2_product, Y12_product);
+[[AxA_TYPE]] #(23, [[AxA_K]]) u2 (Y12_product, {1'b0, Y3_product}, buf_Y_temp);
 
-[[ADDER_1_TYPE]] #(22, [[ADDER_1_K]]) u3 (22'd2097152, ~CB1_product + 1, CBc1_product);
-[[ADDER_1_TYPE]] #(22, [[ADDER_1_K]]) u4 (CBc1_product, ~CB2_product + 1, CBc12_product);
-[[ADDER_1_TYPE]] #(23, [[ADDER_1_K]]) u5 (CBc12_product, {1'b0, CB3_product}, buf_CB_temp);
+[[AxA_TYPE]] #(22, [[AxA_K]]) u3 (22'd2097152, ~CB1_product + 1, CBc1_product);
+[[AxA_TYPE]] #(22, [[AxA_K]]) u4 (CBc1_product, ~CB2_product + 1, CBc12_product);
+[[AxA_TYPE]] #(23, [[AxA_K]]) u5 (CBc12_product, {1'b0, CB3_product}, buf_CB_temp);
 
-[[ADDER_1_TYPE]] #(22, [[ADDER_1_K]]) u6 (22'd2097152, CR1_product, CRc1_product);
-[[ADDER_1_TYPE]] #(23, [[ADDER_1_K]]) u7 (CRc1_product, ~{1'b0,CR2_product} + 1, CRc12_product);
-[[ADDER_1_TYPE]] #(23, [[ADDER_1_K]]) u8 (CRc12_product, ~{1'b0,CR3_product} + 1, buf_CR_temp);
+[[AxA_TYPE]] #(22, [[AxA_K]]) u6 (22'd2097152, CR1_product, CRc1_product);
+[[AxA_TYPE]] #(23, [[AxA_K]]) u7 (CRc1_product, ~{1'b0,CR2_product} + 1, CRc12_product);
+[[AxA_TYPE]] #(23, [[AxA_K]]) u8 (CRc12_product, ~{1'b0,CR3_product} + 1, buf_CR_temp);
+
+
+[[AxM_TYPE]]u #([[AxM_K]], 14, 14) u9 (Y1, data_in[7:0], buf_Y1_product);
+[[AxM_TYPE]]u #([[AxM_K]], 14, 14) u10 (Y2, data_in[15:8], buf_Y2_product);
+[[AxM_TYPE]]u #([[AxM_K]], 14, 8) u11 (Y3, data_in[23:16], buf_Y3_product);
+
+[[AxM_TYPE]]u #([[AxM_K]], 14, 8) u12 (CB1, data_in[7:0], buf_CB1_product);
+[[AxM_TYPE]]u #([[AxM_K]], 14, 8) u13 (CB2, data_in[15:8], buf_CB2_product);
+[[AxM_TYPE]]u #([[AxM_K]], 14, 8) u14 (CB3, data_in[23:16], buf_CB3_product);
+
+[[AxM_TYPE]]u #([[AxM_K]], 14, 8) u15 (CR1, data_in[7:0], buf_CR1_product);
+[[AxM_TYPE]]u #([[AxM_K]], 14, 8) u16 (CR2, data_in[15:8], buf_CR2_product);
+[[AxM_TYPE]]u #([[AxM_K]], 14, 8) u17 (CR3, data_in[23:16], buf_CR3_product);
+
+
 
 always @(posedge clk)
 begin
@@ -103,18 +121,28 @@ begin
 		CR_temp <= 0;
 		end
 	else if (enable) begin
-		Y1_product <= Y1 * data_in[7:0];
-		Y2_product <= Y2 * data_in[15:8];
-		Y3_product <= Y3 * data_in[23:16];   
-		CB1_product <= CB1 * data_in[7:0];
-		CB2_product <= CB2 * data_in[15:8];
-		CB3_product <= CB3 * data_in[23:16];
-		CR1_product <= CR1 * data_in[7:0];
-		CR2_product <= CR2 * data_in[15:8];
-		CR3_product <= CR3 * data_in[23:16];
+		//Y1_product <= Y1 * data_in[7:0];
+		//Y2_product <= Y2 * data_in[15:8];
+		//Y3_product <= Y3 * data_in[23:16];
+		//CB1_product <= CB1 * data_in[7:0];
+		// CB2_product <= CB2 * data_in[15:8];
+		// CB3_product <= CB3 * data_in[23:16];
+		//CR1_product <= CR1 * data_in[7:0];
+		//CR2_product <= CR2 * data_in[15:8];
+		//CR3_product <= CR3 * data_in[23:16];
 		//Y_temp <= Y1_product + Y2_product + Y3_product;
 		//CB_temp <= 22'd2097152 - CB1_product - CB2_product + CB3_product;
 		//CR_temp <= 22'd2097152 + CR1_product - CR2_product - CR3_product;
+
+		Y1_product <= buf_Y1_product;
+		Y2_product <= buf_Y2_product;
+		Y3_product <= buf_Y3_product;
+		CB1_product <= buf_CB1_product;
+		CB2_product <= buf_CB2_product;
+		CB3_product <= buf_CB3_product;
+		CR1_product <= buf_CR1_product;
+		CR2_product <= buf_CR3_product;
+		CR3_product <= buf_CR3_product;
 		Y_temp <= buf_Y_temp;
 		CB_temp <= buf_CB_temp;
 		CR_temp <= buf_CR_temp;

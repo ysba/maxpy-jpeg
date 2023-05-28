@@ -46,7 +46,8 @@ def testbench_run(ckt=None, results_filename=None):
     #     ]
 
     #image_path = "images/balloons.tif"
-    image_path = "images/balloonsmall.tif"
+    #image_path = "images/balloonsmall.tif"
+    image_path = "images/ja.tif"
 
     original_size = os.path.getsize(image_path)
 

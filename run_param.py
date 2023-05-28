@@ -10,19 +10,14 @@ circuit.set_group("study_param_3")
 circuit.set_synth_tool(None)
 circuit.set_results_filename("results.csv")
 circuit.parameters = {
-    "[[ADDER_1_TYPE]]": ["copyA","copyB","eta1","loa","trunc0","trunc1"],
-
-    "[[ADDER_1_K]]": [ #"0","1","2","3","4","5","6","7",
-               "8","9","10","11","12","13","14","15",
-               #"16","17","18","19","20","21"
-               ],
-
-    "[[ADDER_2_TYPE]]": ["copyA","copyB","eta1","loa","trunc0","trunc1"],
-
-    "[[ADDER_2_K]]": [ #"0","1","2","3","4","5","6","7",
-               "8","9","10","11","12","13","14","15",
-               #"16","17","18","19","20","21"
-               ],
+    # "[[AxA_TYPE]]": ["copyA","copyB","eta1","loa","trunc0","trunc1"],
+    # "[[AxA_K]]": ["8","9","10","11","12","13","14","15"],
+    # "[[AxM_TYPE]]": ["DRUM","LOBA0"],
+    # "[[AxM_K]]": ["4","5","6"],
+    "[[AxA_TYPE]]": ["copyA"],
+    "[[AxA_K]]": ["8"],
+    "[[AxM_TYPE]]": ["LOBA0"],
+    "[[AxM_K]]": ["4"],
 }
 
 circuit.set_source_files_to_edit([
