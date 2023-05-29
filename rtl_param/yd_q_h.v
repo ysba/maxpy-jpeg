@@ -32,7 +32,6 @@
 /////////////////////////////////////////////////////////////////////
 
 /* This module combines the dct, quantizer, and huffman modules. */
-`include "y_dct.v"
 `include "y_quantizer.v"
 `include "y_huff.v"
 `timescale 1ns / 100ps
@@ -78,7 +77,7 @@ wire [10:0] Q61, Q62, Q63, Q64, Q65, Q66, Q67, Q68;
 wire [10:0] Q71, Q72, Q73, Q74, Q75, Q76, Q77, Q78; 
 wire [10:0] Q81, Q82, Q83, Q84, Q85, Q86, Q87, Q88; 
 
-	y_dct u1(
+	dct u1(
 	.clk(clk),.rst(rst), .enable(enable), .data_in(data_in), 
 	.Z11_final(Z11_final), .Z12_final(Z12_final), 
 	.Z13_final(Z13_final), .Z14_final(Z14_final), .Z15_final(Z15_final), .Z16_final(Z16_final), 

@@ -32,7 +32,6 @@
 /////////////////////////////////////////////////////////////////////
 
 /* This module combines the dct, quantizer, and huffman modules. */
-`include "cb_dct.v"
 `include "cb_quantizer.v"
 `include "cb_huff.v"
 `timescale 1ns / 100ps
@@ -75,7 +74,7 @@ wire [10:0] Q61, Q62, Q63, Q64, Q65, Q66, Q67, Q68;
 wire [10:0] Q71, Q72, Q73, Q74, Q75, Q76, Q77, Q78; 
 wire [10:0] Q81, Q82, Q83, Q84, Q85, Q86, Q87, Q88; 
 
-	cb_dct u5(
+	dct u5(
 	.clk(clk),.rst(rst), .enable(enable), .data_in(data_in), 
 	.Z11_final(Z11_final), .Z12_final(Z12_final), 
 	.Z13_final(Z13_final), .Z14_final(Z14_final), .Z15_final(Z15_final), .Z16_final(Z16_final), 
@@ -123,7 +122,7 @@ wire [10:0] Q81, Q82, Q83, Q84, Q85, Q86, Q87, Q88;
 	.Q81(Q81), .Q82(Q82), .Q83(Q83), .Q84(Q84), .Q85(Q85), .Q86(Q86), .Q87(Q87), .Q88(Q88),
 	.out_enable(quantizer_enable));
 
-	cb_huff u7(.clk(clk), .rst(rst), .enable(quantizer_enable), 
+	cb_huff u7(.clk(clk), .rst(rst), .enable(quantizer_enable),
 	.Cb11(Q11), .Cb12(Q21), .Cb13(Q31), .Cb14(Q41), .Cb15(Q51), .Cb16(Q61), .Cb17(Q71), .Cb18(Q81), 
 	.Cb21(Q12), .Cb22(Q22), .Cb23(Q32), .Cb24(Q42), .Cb25(Q52), .Cb26(Q62), .Cb27(Q72), .Cb28(Q82),
 	.Cb31(Q13), .Cb32(Q23), .Cb33(Q33), .Cb34(Q43), .Cb35(Q53), .Cb36(Q63), .Cb37(Q73), .Cb38(Q83), 

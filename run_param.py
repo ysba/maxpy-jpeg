@@ -15,15 +15,13 @@ circuit.parameters = {
     # "[[AxM_TYPE]]": ["DRUM","LOBA0"],
     "[[AxA_TYPE]]": ["copyA"],
     "[[AxA_K]]": ["0"],
-    "[[AxM_TYPE]]": ["LOBA3"],#,"LOBA1","LOBA2","LOBA3"],
-    "[[AxM_K]]": ["4"]
+    "[[AxM_TYPE]]": ["DRUM"],#,"LOBA1","LOBA2","LOBA3"],
+    "[[AxM_K]]": ["8"]
 }
 
 circuit.set_source_files_to_edit([
     "rgb2ycbcr",
-    "y_dct",
-    "cb_dct",
-    "cr_dct",
+    "dct",
     ])
 
 circuit.rtl2py_param_loop(base="rtl_param")

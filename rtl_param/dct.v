@@ -44,7 +44,7 @@ by the 8x8 DCT matrix. */
 
 `timescale 1ns / 100ps
 
-module y_dct (
+module dct (
     clk, rst, enable, data_in,
     Z11_final, Z12_final, Z13_final, Z14_final, Z15_final, Z16_final, Z17_final, Z18_final,
     Z21_final, Z22_final, Z23_final, Z24_final, Z25_final, Z26_final, Z27_final, Z28_final,
