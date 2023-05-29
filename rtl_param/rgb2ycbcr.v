@@ -74,9 +74,9 @@ reg	enable_1, enable_2, enable_out;
 wire [23:0] data_out = {CR, CB, Y};
 
 wire [23:0] buf_Y_temp, buf_CB_temp, buf_CR_temp;
-wire [21:0] buf_Y1_product, buf_Y2_product, buf_Y3_product;
-wire [21:0] buf_CB1_product, buf_CB2_product, buf_CB3_product;
-wire [21:0] buf_CR1_product, buf_CR2_product, buf_CR3_product;
+wire [31:0] buf_Y1_product, buf_Y2_product, buf_Y3_product;
+wire [31:0] buf_CB1_product, buf_CB2_product, buf_CB3_product;
+wire [31:0] buf_CR1_product, buf_CR2_product, buf_CR3_product;
 
 [[AxA_TYPE]] #(22, [[AxA_K]]) u1 (Y1_product, Y2_product, Y12_product);
 [[AxA_TYPE]] #(23, [[AxA_K]]) u2 (Y12_product, {1'b0, Y3_product}, buf_Y_temp);
@@ -90,17 +90,17 @@ wire [21:0] buf_CR1_product, buf_CR2_product, buf_CR3_product;
 [[AxA_TYPE]] #(23, [[AxA_K]]) u8 (CRc12_product, ~{1'b0,CR3_product} + 1, buf_CR_temp);
 
 
-[[AxM_TYPE]]u #([[AxM_K]], 14, 14) u9 (Y1, data_in[7:0], buf_Y1_product);
-[[AxM_TYPE]]u #([[AxM_K]], 14, 14) u10 (Y2, data_in[15:8], buf_Y2_product);
-[[AxM_TYPE]]u #([[AxM_K]], 14, 8) u11 (Y3, data_in[23:16], buf_Y3_product);
+[[AxM_TYPE]]u #(.N(16)) u9  ({2'h0,Y1}, {8'h0,data_in[7:0]}, buf_Y1_product);
+[[AxM_TYPE]]u #(.N(16)) u10 ({2'h0,Y2}, {8'h0,data_in[15:8]}, buf_Y2_product);
+[[AxM_TYPE]]u #(.N(16)) u11 ({2'h0,Y3}, {8'h0,data_in[23:16]}, buf_Y3_product);
 
-[[AxM_TYPE]]u #([[AxM_K]], 14, 8) u12 (CB1, data_in[7:0], buf_CB1_product);
-[[AxM_TYPE]]u #([[AxM_K]], 14, 8) u13 (CB2, data_in[15:8], buf_CB2_product);
-[[AxM_TYPE]]u #([[AxM_K]], 14, 8) u14 (CB3, data_in[23:16], buf_CB3_product);
+[[AxM_TYPE]]u #(.N(16)) u12 ({2'h0,CB1}, {8'h0,data_in[7:0]}, buf_CB1_product);
+[[AxM_TYPE]]u #(.N(16)) u13 ({2'h0,CB2}, {8'h0,data_in[15:8]}, buf_CB2_product);
+[[AxM_TYPE]]u #(.N(16)) u14 ({2'h0,CB3}, {8'h0,data_in[23:16]}, buf_CB3_product);
 
-[[AxM_TYPE]]u #([[AxM_K]], 14, 8) u15 (CR1, data_in[7:0], buf_CR1_product);
-[[AxM_TYPE]]u #([[AxM_K]], 14, 8) u16 (CR2, data_in[15:8], buf_CR2_product);
-[[AxM_TYPE]]u #([[AxM_K]], 14, 8) u17 (CR3, data_in[23:16], buf_CR3_product);
+[[AxM_TYPE]]u #(.N(16)) u15 ({2'h0,CR1}, {8'h0,data_in[7:0]}, buf_CR1_product);
+[[AxM_TYPE]]u #(.N(16)) u16 ({2'h0,CR2}, {8'h0,data_in[15:8]}, buf_CR2_product);
+[[AxM_TYPE]]u #(.N(16)) u17 ({2'h0,CR3}, {8'h0,data_in[23:16]}, buf_CR3_product);
 
 
 
@@ -122,27 +122,27 @@ begin
 		end
 	else if (enable) begin
 		//Y1_product <= Y1 * data_in[7:0];
-		//Y2_product <= Y2 * data_in[15:8];
-		//Y3_product <= Y3 * data_in[23:16];
-		//CB1_product <= CB1 * data_in[7:0];
+		// Y2_product <= Y2 * data_in[15:8];
+		// Y3_product <= Y3 * data_in[23:16];
+		// CB1_product <= CB1 * data_in[7:0];
 		// CB2_product <= CB2 * data_in[15:8];
 		// CB3_product <= CB3 * data_in[23:16];
-		//CR1_product <= CR1 * data_in[7:0];
-		//CR2_product <= CR2 * data_in[15:8];
-		//CR3_product <= CR3 * data_in[23:16];
+		// CR1_product <= CR1 * data_in[7:0];
+		// CR2_product <= CR2 * data_in[15:8];
+		// CR3_product <= CR3 * data_in[23:16];
 		//Y_temp <= Y1_product + Y2_product + Y3_product;
 		//CB_temp <= 22'd2097152 - CB1_product - CB2_product + CB3_product;
 		//CR_temp <= 22'd2097152 + CR1_product - CR2_product - CR3_product;
 
-		Y1_product <= buf_Y1_product;
-		Y2_product <= buf_Y2_product;
-		Y3_product <= buf_Y3_product;
-		CB1_product <= buf_CB1_product;
-		CB2_product <= buf_CB2_product;
-		CB3_product <= buf_CB3_product;
-		CR1_product <= buf_CR1_product;
-		CR2_product <= buf_CR3_product;
-		CR3_product <= buf_CR3_product;
+		Y1_product <= buf_Y1_product[21:0];
+		Y2_product <= buf_Y2_product[21:0];
+		Y3_product <= buf_Y3_product[21:0];
+		CB1_product <= buf_CB1_product[21:0];
+		CB2_product <= buf_CB2_product[21:0];
+		CB3_product <= buf_CB3_product[21:0];
+		CR1_product <= buf_CR1_product[21:0];
+		CR2_product <= buf_CR2_product[21:0];
+		CR3_product <= buf_CR3_product[21:0];
 		Y_temp <= buf_Y_temp;
 		CB_temp <= buf_CB_temp;
 		CR_temp <= buf_CR_temp;

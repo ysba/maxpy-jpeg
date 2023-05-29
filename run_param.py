@@ -13,11 +13,10 @@ circuit.parameters = {
     # "[[AxA_TYPE]]": ["copyA","copyB","eta1","loa","trunc0","trunc1"],
     # "[[AxA_K]]": ["8","9","10","11","12","13","14","15"],
     # "[[AxM_TYPE]]": ["DRUM","LOBA0"],
-    # "[[AxM_K]]": ["4","5","6"],
     "[[AxA_TYPE]]": ["copyA"],
-    "[[AxA_K]]": ["8"],
-    "[[AxM_TYPE]]": ["LOBA0"],
-    "[[AxM_K]]": ["4"],
+    "[[AxA_K]]": ["0"],
+    "[[AxM_TYPE]]": ["LOBA3"],#,"LOBA1","LOBA2","LOBA3"],
+    "[[AxM_K]]": ["4"]
 }
 
 circuit.set_source_files_to_edit([
