@@ -7,7 +7,7 @@ import os
 
 bitstream = []
 block_size = 64
-group = "study_param_3"
+group = "study_param_4"
 
 def clock_cycle(ckt=None, qty=1):
     if ckt is None:
@@ -180,7 +180,13 @@ def testbench_run(ckt=None, results_filename=None):
 
     print(">>> testbench end")
 
-    return False, []
+    ##TODO: check what value would be good for jpeg
+    if ssim_value > 0.95:
+        prun_flag = True
+    else:
+        prun_flag = False
+
+    return prun_flag, []
 
 
 if __name__ == "__main__":
@@ -191,4 +197,4 @@ if __name__ == "__main__":
 
     for ckt_name in ckt_list:
         ckt = importlib.import_module(ckt_name)
-        testbench_run(ckt=ckt, results_filename="study_param_2/results.csv")
+        testbench_run(ckt=ckt, results_filename="study_param_3/results.csv")

@@ -31,47 +31,83 @@
 ////                                                             ////
 /////////////////////////////////////////////////////////////////////
 
-/* This is the top level module of the JPEG Encoder Core.
-This module takes the output from the fifo_out module and sends it 
-to the ff_checker module to check for FF's in the bitstream.  When it finds an
-FF, it puts a 00 after it, and then continues with the rest of the bitstream.
-At the end of the file, if there is not a full 32 bit set of JPEG data, then the
-signal "eof_data_partial_ready" will go high, to indicate there
-are less than 32 valid JPEG bits in the bitstream.  The number of valid bits in the
-last JPEG_bitstream value is written to the signal "end_of_file_bitstream_count".
-*/
+/* This FIFO is used for the ff_checker module.  */
 
-`include "fifo_out.v"
-`include "ff_checker.v"
-`include "dct.v"
-`include "quantizer.v"
 `timescale 1ns / 100ps
 
-module jpeg_top(clk, rst, end_of_file_signal, enable, data_in, JPEG_bitstream, 
-data_ready, end_of_file_bitstream_count, eof_data_partial_ready);
-input		clk;
-input		rst;
-input		end_of_file_signal;
-input		enable;
-input	[23:0]	data_in;
-output  [31:0]  JPEG_bitstream;
-output		data_ready;
-output	[4:0] end_of_file_bitstream_count;
-output		eof_data_partial_ready;
+module sync_fifo_ff (clk, rst, read_req, write_data, write_enable, rollover_write,
+read_data, fifo_empty, rdata_valid);
+input	clk;
+input	rst;
+input	read_req;
+input [90:0] write_data;
+input write_enable;
+input rollover_write;
+output [90:0]   read_data;  
+output  fifo_empty; 
+output	rdata_valid;
+   
+reg [4:0] read_ptr;
+reg [4:0] write_ptr;
+reg [90:0] mem [0:15];
+reg [90:0] read_data;
+reg rdata_valid;
+wire [3:0] write_addr = write_ptr[3:0];
+wire [3:0] read_addr = read_ptr[3:0];	
+wire read_enable = read_req && (~fifo_empty);
+assign fifo_empty = (read_ptr == write_ptr);
 
-wire [31:0] JPEG_FF;
-wire data_ready_FF;
-wire [4:0] orc_reg_in;
- 
 
- fifo_out u19 (.clk(clk), .rst(rst), .enable(enable), .data_in(data_in), 
- .JPEG_bitstream(JPEG_FF), .data_ready(data_ready_FF), .orc_reg(orc_reg_in));
- 
- ff_checker u20 (.clk(clk), .rst(rst), 
- .end_of_file_signal(end_of_file_signal), .JPEG_in(JPEG_FF), 
- .data_ready_in(data_ready_FF), .orc_reg_in(orc_reg_in),
- .JPEG_bitstream_1(JPEG_bitstream), 
- .data_ready_1(data_ready), .orc_reg(end_of_file_bitstream_count),
- .eof_data_partial_ready(eof_data_partial_ready));
+always @(posedge clk)
+  begin
+   if (rst)
+      write_ptr <= {(5){1'b0}};
+   else if (write_enable & !rollover_write)
+      write_ptr <= write_ptr + {{4{1'b0}},1'b1};
+   else if (write_enable & rollover_write)
+      write_ptr <= write_ptr + 5'b00010;
+   // A rollover_write means that there have been a total of 4 FF's
+   // that have been detected in the bitstream.  So an extra set of 32
+   // bits will be put into the bitstream (due to the 4 extra 00's added
+   // after the 4 FF's), and the input data will have to 
+   // be delayed by 1 clock cycle as it makes its way into the output
+   // bitstream.  So the write_ptr is incremented by 2 for a rollover, giving
+   // the output the extra clock cycle it needs to write the 
+   // extra 32 bits to the bitstream.  The output
+   // will read the dummy data from the FIFO, but won't do anything with it,
+   // it will be putting the extra set of 32 bits into the bitstream on that
+   // clock cycle.
+  end
 
- endmodule
+always @(posedge clk)
+begin
+   if (rst)
+      rdata_valid <= 1'b0;
+   else if (read_enable)
+      rdata_valid <= 1'b1;
+   else
+   	  rdata_valid <= 1'b0;  
+end
+  
+always @(posedge clk)
+ begin
+   if (rst)
+      read_ptr <= {(5){1'b0}};
+   else if (read_enable)
+      read_ptr <= read_ptr + {{4{1'b0}},1'b1};
+end
+
+// Mem write
+always @(posedge clk)
+  begin
+   if (write_enable)
+     mem[write_addr] <= write_data;
+  end
+// Mem Read
+always @(posedge clk)
+  begin
+   if (read_enable)
+      read_data <= mem[read_addr];
+  end
+  
+endmodule

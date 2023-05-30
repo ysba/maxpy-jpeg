@@ -32,7 +32,6 @@
 /////////////////////////////////////////////////////////////////////
 
 /* This module combines the dct, quantizer, and huffman modules. */
-`include "cr_quantizer.v"
 `include "cr_huff.v"
 `timescale 1ns / 100ps
 
@@ -95,7 +94,7 @@ wire [10:0] Q81, Q82, Q83, Q84, Q85, Q86, Q87, Q88;
 	.Z83_final(Z83_final), .Z84_final(Z84_final), .Z85_final(Z85_final), .Z86_final(Z86_final), 
 	.Z87_final(Z87_final), .Z88_final(Z88_final), .output_enable(dct_enable)); 
 	
-	cr_quantizer u9(
+	quantizer u9(
 	.clk(clk),.rst(rst),.enable(dct_enable),
 	.Z11(Z11_final), .Z12(Z12_final), .Z13(Z13_final), .Z14(Z14_final), 
 	.Z15(Z15_final), .Z16(Z16_final), .Z17(Z17_final), .Z18(Z18_final), 
@@ -123,14 +122,14 @@ wire [10:0] Q81, Q82, Q83, Q84, Q85, Q86, Q87, Q88;
 	.Q81(Q81), .Q82(Q82), .Q83(Q83), .Q84(Q84), .Q85(Q85), .Q86(Q86), .Q87(Q87), .Q88(Q88),
 	.out_enable(quantizer_enable));
 
-	cr_huff u10(.clk(clk), .rst(rst), .enable(quantizer_enable), 
-	.Cr11(Q11), .Cr12(Q21), .Cr13(Q31), .Cr14(Q41), .Cr15(Q51), .Cr16(Q61), .Cr17(Q71), .Cr18(Q81), 
+	cr_huff u10(.clk(clk), .rst(rst), .enable(quantizer_enable),
+	.Cr11(Q11), .Cr12(Q21), .Cr13(Q31), .Cr14(Q41), .Cr15(Q51), .Cr16(Q61), .Cr17(Q71), .Cr18(Q81),
 	.Cr21(Q12), .Cr22(Q22), .Cr23(Q32), .Cr24(Q42), .Cr25(Q52), .Cr26(Q62), .Cr27(Q72), .Cr28(Q82),
-	.Cr31(Q13), .Cr32(Q23), .Cr33(Q33), .Cr34(Q43), .Cr35(Q53), .Cr36(Q63), .Cr37(Q73), .Cr38(Q83), 
+	.Cr31(Q13), .Cr32(Q23), .Cr33(Q33), .Cr34(Q43), .Cr35(Q53), .Cr36(Q63), .Cr37(Q73), .Cr38(Q83),
 	.Cr41(Q14), .Cr42(Q24), .Cr43(Q34), .Cr44(Q44), .Cr45(Q54), .Cr46(Q64), .Cr47(Q74), .Cr48(Q84),
-	.Cr51(Q15), .Cr52(Q25), .Cr53(Q35), .Cr54(Q45), .Cr55(Q55), .Cr56(Q65), .Cr57(Q75), .Cr58(Q85), 
+	.Cr51(Q15), .Cr52(Q25), .Cr53(Q35), .Cr54(Q45), .Cr55(Q55), .Cr56(Q65), .Cr57(Q75), .Cr58(Q85),
 	.Cr61(Q16), .Cr62(Q26), .Cr63(Q36), .Cr64(Q46), .Cr65(Q56), .Cr66(Q66), .Cr67(Q76), .Cr68(Q86),
-	.Cr71(Q17), .Cr72(Q27), .Cr73(Q37), .Cr74(Q47), .Cr75(Q57), .Cr76(Q67), .Cr77(Q77), .Cr78(Q87), 
+	.Cr71(Q17), .Cr72(Q27), .Cr73(Q37), .Cr74(Q47), .Cr75(Q57), .Cr76(Q67), .Cr77(Q77), .Cr78(Q87),
 	.Cr81(Q18), .Cr82(Q28), .Cr83(Q38), .Cr84(Q48), .Cr85(Q58), .Cr86(Q68), .Cr87(Q78), .Cr88(Q88),
 	.JPEG_bitstream(JPEG_bitstream), .data_ready(data_ready), .output_reg_count(cr_orc),
 	.end_of_block_empty(end_of_block_empty));		

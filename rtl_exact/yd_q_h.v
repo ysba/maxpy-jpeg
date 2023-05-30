@@ -32,21 +32,26 @@
 /////////////////////////////////////////////////////////////////////
 
 /* This module combines the dct, quantizer, and huffman modules. */
-`include "cb_huff.v"
+`include "y_dct.v"
+`include "y_quantizer.v"
+`include "y_huff.v"
 `timescale 1ns / 100ps
 
-module cbd_q_h(clk, rst, enable, data_in,
-JPEG_bitstream, data_ready, cb_orc,  
-end_of_block_empty);
+module yd_q_h(clk, rst, enable, data_in,
+JPEG_bitstream, 
+  data_ready, y_orc, end_of_block_output,
+   end_of_block_empty);
 input		clk;
 input		rst;
 input		enable;
 input	[7:0]	data_in;
 output  [31:0]  JPEG_bitstream;
 output		data_ready;
-output [4:0] cb_orc;
+output [4:0] y_orc;
+output	end_of_block_output;
 output	end_of_block_empty;
- 
+
+
 wire	dct_enable, quantizer_enable;
 wire [10:0] Z11_final, Z12_final, Z13_final, Z14_final;
 wire [10:0] Z15_final, Z16_final, Z17_final, Z18_final;
@@ -73,7 +78,7 @@ wire [10:0] Q61, Q62, Q63, Q64, Q65, Q66, Q67, Q68;
 wire [10:0] Q71, Q72, Q73, Q74, Q75, Q76, Q77, Q78; 
 wire [10:0] Q81, Q82, Q83, Q84, Q85, Q86, Q87, Q88; 
 
-	dct u5(
+	y_dct u1(
 	.clk(clk),.rst(rst), .enable(enable), .data_in(data_in), 
 	.Z11_final(Z11_final), .Z12_final(Z12_final), 
 	.Z13_final(Z13_final), .Z14_final(Z14_final), .Z15_final(Z15_final), .Z16_final(Z16_final), 
@@ -93,7 +98,7 @@ wire [10:0] Q81, Q82, Q83, Q84, Q85, Q86, Q87, Q88;
 	.Z83_final(Z83_final), .Z84_final(Z84_final), .Z85_final(Z85_final), .Z86_final(Z86_final), 
 	.Z87_final(Z87_final), .Z88_final(Z88_final), .output_enable(dct_enable)); 
 	
-	quantizer u6(
+	y_quantizer u2(
 	.clk(clk),.rst(rst),.enable(dct_enable),
 	.Z11(Z11_final), .Z12(Z12_final), .Z13(Z13_final), .Z14(Z14_final), 
 	.Z15(Z15_final), .Z16(Z16_final), .Z17(Z17_final), .Z18(Z18_final), 
@@ -121,17 +126,17 @@ wire [10:0] Q81, Q82, Q83, Q84, Q85, Q86, Q87, Q88;
 	.Q81(Q81), .Q82(Q82), .Q83(Q83), .Q84(Q84), .Q85(Q85), .Q86(Q86), .Q87(Q87), .Q88(Q88),
 	.out_enable(quantizer_enable));
 
-	cb_huff u7(.clk(clk), .rst(rst), .enable(quantizer_enable),
-	.Cb11(Q11), .Cb12(Q21), .Cb13(Q31), .Cb14(Q41), .Cb15(Q51), .Cb16(Q61), .Cb17(Q71), .Cb18(Q81),
-	.Cb21(Q12), .Cb22(Q22), .Cb23(Q32), .Cb24(Q42), .Cb25(Q52), .Cb26(Q62), .Cb27(Q72), .Cb28(Q82),
-	.Cb31(Q13), .Cb32(Q23), .Cb33(Q33), .Cb34(Q43), .Cb35(Q53), .Cb36(Q63), .Cb37(Q73), .Cb38(Q83),
-	.Cb41(Q14), .Cb42(Q24), .Cb43(Q34), .Cb44(Q44), .Cb45(Q54), .Cb46(Q64), .Cb47(Q74), .Cb48(Q84),
-	.Cb51(Q15), .Cb52(Q25), .Cb53(Q35), .Cb54(Q45), .Cb55(Q55), .Cb56(Q65), .Cb57(Q75), .Cb58(Q85),
-	.Cb61(Q16), .Cb62(Q26), .Cb63(Q36), .Cb64(Q46), .Cb65(Q56), .Cb66(Q66), .Cb67(Q76), .Cb68(Q86),
-	.Cb71(Q17), .Cb72(Q27), .Cb73(Q37), .Cb74(Q47), .Cb75(Q57), .Cb76(Q67), .Cb77(Q77), .Cb78(Q87),
-	.Cb81(Q18), .Cb82(Q28), .Cb83(Q38), .Cb84(Q48), .Cb85(Q58), .Cb86(Q68), .Cb87(Q78), .Cb88(Q88),
-	.JPEG_bitstream(JPEG_bitstream), .data_ready(data_ready), .output_reg_count(cb_orc),
-	.end_of_block_empty(end_of_block_empty));		
-	
+	y_huff u3(.clk(clk), .rst(rst), .enable(quantizer_enable), 
+	.Y11(Q11), .Y12(Q21), .Y13(Q31), .Y14(Q41), .Y15(Q51), .Y16(Q61), .Y17(Q71), .Y18(Q81), 
+	.Y21(Q12), .Y22(Q22), .Y23(Q32), .Y24(Q42), .Y25(Q52), .Y26(Q62), .Y27(Q72), .Y28(Q82),
+	.Y31(Q13), .Y32(Q23), .Y33(Q33), .Y34(Q43), .Y35(Q53), .Y36(Q63), .Y37(Q73), .Y38(Q83), 
+	.Y41(Q14), .Y42(Q24), .Y43(Q34), .Y44(Q44), .Y45(Q54), .Y46(Q64), .Y47(Q74), .Y48(Q84),
+	.Y51(Q15), .Y52(Q25), .Y53(Q35), .Y54(Q45), .Y55(Q55), .Y56(Q65), .Y57(Q75), .Y58(Q85), 
+	.Y61(Q16), .Y62(Q26), .Y63(Q36), .Y64(Q46), .Y65(Q56), .Y66(Q66), .Y67(Q76), .Y68(Q86),
+	.Y71(Q17), .Y72(Q27), .Y73(Q37), .Y74(Q47), .Y75(Q57), .Y76(Q67), .Y77(Q77), .Y78(Q87), 
+	.Y81(Q18), .Y82(Q28), .Y83(Q38), .Y84(Q48), .Y85(Q58), .Y86(Q68), .Y87(Q78), .Y88(Q88),
+	.JPEG_bitstream(JPEG_bitstream), .data_ready(data_ready), .output_reg_count(y_orc),
+	.end_of_block_output(end_of_block_output),
+	 .end_of_block_empty(end_of_block_empty));	
 
 	endmodule

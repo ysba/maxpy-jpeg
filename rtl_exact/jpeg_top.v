@@ -43,8 +43,6 @@ last JPEG_bitstream value is written to the signal "end_of_file_bitstream_count"
 
 `include "fifo_out.v"
 `include "ff_checker.v"
-`include "dct.v"
-`include "quantizer.v"
 `timescale 1ns / 100ps
 
 module jpeg_top(clk, rst, end_of_file_signal, enable, data_in, JPEG_bitstream, 

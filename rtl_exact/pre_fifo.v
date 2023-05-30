@@ -31,47 +31,54 @@
 ////                                                             ////
 /////////////////////////////////////////////////////////////////////
 
-/* This is the top level module of the JPEG Encoder Core.
-This module takes the output from the fifo_out module and sends it 
-to the ff_checker module to check for FF's in the bitstream.  When it finds an
-FF, it puts a 00 after it, and then continues with the rest of the bitstream.
-At the end of the file, if there is not a full 32 bit set of JPEG data, then the
-signal "eof_data_partial_ready" will go high, to indicate there
-are less than 32 valid JPEG bits in the bitstream.  The number of valid bits in the
-last JPEG_bitstream value is written to the signal "end_of_file_bitstream_count".
-*/
 
-`include "fifo_out.v"
-`include "ff_checker.v"
-`include "dct.v"
-`include "quantizer.v"
+/* This module combines the Y, Cb, and Cr blocks, and the RGB to Y, Cb, and Cr
+converter. */
+`include "rgb2ycbcr.v"
+`include "crd_q_h.v"
+`include "cbd_q_h.v"
+`include "yd_q_h.v"
 `timescale 1ns / 100ps
 
-module jpeg_top(clk, rst, end_of_file_signal, enable, data_in, JPEG_bitstream, 
-data_ready, end_of_file_bitstream_count, eof_data_partial_ready);
-input		clk;
-input		rst;
-input		end_of_file_signal;
-input		enable;
+module pre_fifo(clk, rst, enable, data_in, cr_JPEG_bitstream, cr_data_ready, 
+cr_orc, cb_JPEG_bitstream, cb_data_ready, cb_orc, y_JPEG_bitstream, 
+y_data_ready, y_orc, y_eob_output,
+y_eob_empty, cb_eob_empty, cr_eob_empty);
+input		clk, rst, enable;
 input	[23:0]	data_in;
-output  [31:0]  JPEG_bitstream;
-output		data_ready;
-output	[4:0] end_of_file_bitstream_count;
-output		eof_data_partial_ready;
+output  [31:0]  cr_JPEG_bitstream;
+output		cr_data_ready;
+output  [4:0] cr_orc;
+output  [31:0]  cb_JPEG_bitstream;
+output		cb_data_ready;
+output  [4:0] cb_orc;
+output  [31:0]  y_JPEG_bitstream;
+output		y_data_ready;
+output  [4:0] y_orc;
+output		y_eob_output; 
+output		y_eob_empty, cb_eob_empty, cr_eob_empty;
 
-wire [31:0] JPEG_FF;
-wire data_ready_FF;
-wire [4:0] orc_reg_in;
+
+wire	rgb_enable;
+wire	[23:0]	dct_data_in;
+
+
+	RGB2YCBCR u4(.clk(clk), .rst(rst), .enable(enable), 
+	.data_in(data_in), .data_out(dct_data_in), .enable_out(rgb_enable));
+	
+	crd_q_h u11(.clk(clk), .rst(rst), .enable(rgb_enable), .data_in(dct_data_in[23:16]),
+	.JPEG_bitstream(cr_JPEG_bitstream), 
+ 	 .data_ready(cr_data_ready), .cr_orc(cr_orc),
+ 	 .end_of_block_empty(cr_eob_empty)); 
+	
+	cbd_q_h u12(.clk(clk), .rst(rst), .enable(rgb_enable), .data_in(dct_data_in[15:8]),
+	.JPEG_bitstream(cb_JPEG_bitstream), 
+ 	 .data_ready(cb_data_ready), .cb_orc(cb_orc),
+ 	 .end_of_block_empty(cb_eob_empty)); 
  
-
- fifo_out u19 (.clk(clk), .rst(rst), .enable(enable), .data_in(data_in), 
- .JPEG_bitstream(JPEG_FF), .data_ready(data_ready_FF), .orc_reg(orc_reg_in));
- 
- ff_checker u20 (.clk(clk), .rst(rst), 
- .end_of_file_signal(end_of_file_signal), .JPEG_in(JPEG_FF), 
- .data_ready_in(data_ready_FF), .orc_reg_in(orc_reg_in),
- .JPEG_bitstream_1(JPEG_bitstream), 
- .data_ready_1(data_ready), .orc_reg(end_of_file_bitstream_count),
- .eof_data_partial_ready(eof_data_partial_ready));
-
- endmodule
+  	yd_q_h u13(.clk(clk), .rst(rst), .enable(rgb_enable), .data_in(dct_data_in[7:0]),
+	.JPEG_bitstream(y_JPEG_bitstream), 
+ 	 .data_ready(y_data_ready), .y_orc(y_orc),
+ 	 .end_of_block_output(y_eob_output), .end_of_block_empty(y_eob_empty)); 
+  
+	endmodule
