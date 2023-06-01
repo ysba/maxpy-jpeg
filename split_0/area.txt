@@ -1,0 +1,16 @@
+MAxPy - Version 0.1.2-dev
+
+>>> MAxPy rtl2py: converting Verilog RTL design "jpeg_top" into Python module
+> Base "rtl_exact", Target ""
+> Start: 05-30-2023 20:44:40
+> Synth
+  > Logic synthesis ok
+  > Area estimation ok
+  > Power and timing estimations ok
+  > Netlist estimated area: 168134.099
+  > Netlist estimated power = 7028.850 uW
+  > Netlist estimated maximum delay = 42141.492 nS
+> Verilator
+> End: 05-31-2023 01:12:18
+>>> Error converting circuit "jpeg_top"! (code: ErrorCodes.VERI2C_ERROR)
+ 

@@ -1,0 +1,12 @@
+MAxPy: VERILATOR LOG
+
+Command line:
+
+verilator -Wall -Wno-UNUSED -cc -top jpeg_top -Mdir results_a/jpeg_top_copyB_12_DRUM_8/source/ /home/ysba/MAxPy/src/MAxPy/tcl/Verilator/verilator_config.vlt -Iresults_a/jpeg_top_copyB_12_DRUM_8/rtl results_a/jpeg_top_copyB_12_DRUM_8/rtl/jpeg_top.v /home/ysba/MAxPy/src/MAxPy/pdk/NanGate15nm.v /home/ysba/MAxPy/src/MAxPy/vlib/AxArith/adders/*.v /home/ysba/MAxPy/src/MAxPy/vlib/AxArith/multipliers/*.v --prefix jpeg_top_copyB_12_DRUM_8 --mod-prefix sub
+
+Log from stdout and stderr:
+
+
+
+05-30-2023 09:48:34
+

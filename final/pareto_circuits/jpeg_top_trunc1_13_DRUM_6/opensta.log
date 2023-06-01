@@ -1,0 +1,32 @@
+MAxPy: OpenSTA LOG
+
+Command line:
+
+sta cmd_file.sta
+
+OpenSTA file:
+
+read_liberty /home/ysba/MAxPy/src/MAxPy/pdk/NanGate15nm.lib
+read_verilog results_a/jpeg_top_trunc1_13_DRUM_6/netlist_yosys/jpeg_top.v
+link_design jpeg_top
+report_power -digits 5 >power.rpt
+report_checks -unconstrained -path_delay max -format summary -digits 5 >timing.rpt
+exit
+
+
+Log from stdout and stderr:
+
+OpenSTA 2.4.0 1a02072d95 Copyright (c) 2021, Parallax Software, Inc.
+License GPLv3: GNU GPL version 3 <http://gnu.org/licenses/gpl.html>
+
+This is free software, and you are free to change and redistribute it
+under certain conditions; type `show_copying' for details. 
+This program comes with ABSOLUTELY NO WARRANTY; for details type `show_warranty'.
+Power report:
+
+['Group                   Internal   Switching     Leakage       Total\n', '                           Power       Power       Power       Power (Watts)\n', '--------------------------------------------------------------------\n', 'Sequential           8.62480e-12 2.14127e-12 1.43814e-03 1.43814e-03  36.6%\n', 'Combinational        2.19719e-10 4.28584e-11 2.48868e-03 2.48868e-03  63.4%\n', 'Macro                0.00000e+00 0.00000e+00 0.00000e+00 0.00000e+00   0.0%\n', 'Pad                  0.00000e+00 0.00000e+00 0.00000e+00 0.00000e+00   0.0%\n', '--------------------------------------------------------------------\n', 'Total                2.28340e-10 4.50015e-11 3.92442e-03 3.92442e-03 100.0%\n', '                            0.0%        0.0%      100.0%\n']
+
+Timing report:
+
+['Startpoint                           Endpoint                                  Slack\n', '-----------------------------------------------------------------------------------\n', 'rst (input)                          _447254_/D (DFFRNQ_X1)               31343.73438\n', '\n']
+

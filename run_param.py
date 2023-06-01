@@ -17,28 +17,19 @@ circuit.set_source_files_to_edit([
     ])
 
 # first round: DRUM multiplier
-# circuit.parameters = {
-#     "[[AxA_TYPE]]": ["copyA","copyB","eta1","loa","trunc0","trunc1"],
-#     "[[AxA_K]]": ["8","9","10","11","12","13","14","15"],
-#     "[[AxM_TYPE]]": ["DRUM"],
-#     "[[AxM_K]]": ["8","7","6","5","4"],
-# }
-# circuit.rtl2py_param_loop(base="rtl_param")
-
-# second round: LOBA multiplier
-# circuit.parameters = {
-#     "[[AxA_TYPE]]": ["copyA","copyB","eta1","loa","trunc0","trunc1"],
-#     "[[AxA_K]]": ["4","5","6","7","8","9","10","11","12","13","14","15"],
-#     "[[AxM_TYPE]]": ["LOBA0","LOBA1","LOBA2","LOBA3"],
-#     "[[AxM_K]]": ["4"],
-# }
-# circuit.rtl2py_param_loop(base="rtl_param")
-
 circuit.parameters = {
-    "[[AxA_TYPE]]": ["copyA"],
-    "[[AxA_K]]": ["0"],
+    "[[AxA_TYPE]]": ["copyA","copyB","eta1","loa","trunc0","trunc1"],
+    "[[AxA_K]]": ["6","7","8","9","10","11","12","13","14","15"],
     "[[AxM_TYPE]]": ["DRUM"],
-    "[[AxM_K]]": ["8"],
+    "[[AxM_K]]": ["8","7","6","5","4"],
 }
 circuit.rtl2py_param_loop(base="rtl_param")
 
+# second round: LOBA multiplier
+circuit.parameters = {
+    "[[AxA_TYPE]]": ["copyA","copyB","eta1","loa","trunc0","trunc1"],
+    "[[AxA_K]]": ["6","7","8","9","10","11","12","13","14","15"],
+    "[[AxM_TYPE]]": ["LOBA0","LOBA1","LOBA2","LOBA3"],
+    "[[AxM_K]]": ["4"],
+}
+circuit.rtl2py_param_loop(base="rtl_param")
